@@ -2,10 +2,10 @@ import numba as nb
 from numba import njit
 import numpy as np
 
-numba_bytes = nb.typeof("".encode())
+NumbaBytesType = nb.typeof("".encode())
 
 
-@njit(nb.int32(numba_bytes, numba_bytes))
+@njit(nb.int32(NumbaBytesType, NumbaBytesType))
 def jit_edit_dist(b0: bytes, b1: bytes) -> nb.int32:
     m, n = len(b0), len(b1)
     cache = np.zeros((m + 1, n + 1))
@@ -28,7 +28,7 @@ def jit_edit_dist(b0: bytes, b1: bytes) -> nb.int32:
     return cache[m, n]
 
 
-@njit(nb.int32(numba_bytes, numba_bytes))
+@njit(nb.int32(NumbaBytesType, NumbaBytesType))
 def jit_lsc(b0: bytes, b1: bytes) -> nb.int32:
     m, n = len(b0), len(b1)
     cache = np.zeros((m + 1, n + 1))
