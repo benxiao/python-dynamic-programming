@@ -21,11 +21,12 @@ def heapsink(_heap, _dict, idx, debug=False):
     sink the item at idx
     """
     pos = idx
-    #
-    while (left_idx := left(pos)) < len(_heap):
 
+    while left(pos) < len(_heap):
+        left_idx = left(pos)
         smaller = left_idx
-        if (right_idx := left_idx + 1) < len(_heap):
+        right_idx = left_idx + 1
+        if right_idx < len(_heap):
             if _heap[left_idx][0] > _heap[right_idx][0]:
                 smaller = right_idx
 
@@ -62,7 +63,6 @@ def heapremove(_heap, _dict, key, debug=False):
     """
     remove a key in the heap
     """
-
     # will catch key error
     idx = _dict[key]
     _heap[idx] = (MINIMUM_VALUE, key)
@@ -96,8 +96,8 @@ def heapfloat(_heap, _dict, idx, debug=False):
     while pos > 1 and _heap[pos][0] < _heap[parent(pos)][0]:
         parent_pos = parent(pos)
         _heap[pos], _heap[parent_pos] = _heap[parent_pos], _heap[pos]
-        child_key = heap[pos][1]
-        parent_key = heap[parent_pos][1]
+        child_key = _heap[pos][1]
+        parent_key = _heap[parent_pos][1]
         _dict[child_key], _dict[parent_key] = _dict[parent_key], _dict[child_key]
         pos = parent(idx)
     if debug:
@@ -141,34 +141,58 @@ def check_invariants(_heap, _dict):
             raise ValueError("dict is not updated properly")
 
 
+class HeapDict:
+    def __init__(self):
+        self._lst = [None]
+        self._dict = {}
+
+    def __str__(self):
+        return str(self._lst) + "\n" + str(self._dict)
+
+    def push(self, priority, key, debug=False):
+        heappush(self._lst, self._dict, (priority, key), debug=debug)
+
+    def pop(self, debug=False):
+        heappop(self._lst, self._dict, debug=debug)
+
+    def update(self, priority, key, debug=False):
+        heapupdate(self._lst, self._dict,  key, priority, debug=debug)
+
+
 if __name__ == '__main__':
-    heap = [None]
-    d = {}
-    print(heappush(heap, d, (6, "rt")))
 
-    print(heappush(heap, d, (7, "gh")))
-    print(heappush(heap, d, (3, "ab")))
-    print(d)
-    print(heap)
-    print(heappush(heap, d, (2, "kl")))
-    print(d)
-    print(heap)
-    print(heappush(heap, d, (1, "gkl")))
-    print(heappush(heap, d, (4, "lo")))
-
-    print(d)
-    print(heap)
-    print(heapremove(heap, d, 'gh'))
-
-    print(d)
-    print(heap)
-    print(heappop(heap, d))
-
-    print(d)
-    print(heap)
-
-    print(heapupdate(heap, d, 'kl', 10))
-
-    print(d)
-    print(heap)
+    hd = HeapDict()
+    hd.push(6, "rt")
+    hd.push(7, "gh")
+    hd.push(3, "ab")
+    print(hd)
+    # heap = [None]
+    # d = {}
+    # print(heappush(heap, d, (6, "rt")))
+    #
+    # print(heappush(heap, d, (7, "gh")))
+    # print(heappush(heap, d, (3, "ab")))
+    # print(d)
+    # print(heap)
+    # print(heappush(heap, d, (2, "kl")))
+    # print(d)
+    # print(heap)
+    # print(heappush(heap, d, (1, "gkl")))
+    # print(heappush(heap, d, (4, "lo")))
+    #
+    # print(d)
+    # print(heap)
+    # print(heapremove(heap, d, 'gh'))
+    #
+    # print(d)
+    # print(heap)
+    # print(heappop(heap, d))
+    #
+    # print(d)
+    # print(heap)
+    #
+    # print(heapupdate(heap, d, 'kl', 10))
+    #
+    # print(d)
+    # print(heap)
 
