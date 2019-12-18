@@ -82,7 +82,7 @@ def heapupdate(_heap, _dict, key, priority, debug=False):
     """
     idx = _dict[key]
     old_priority, key = _heap[idx]
-    heap[idx] = (priority, key)
+    _heap[idx] = (priority, key)
     if priority > old_priority:
         heapsink(_heap, _dict, idx)
     else:
@@ -157,7 +157,7 @@ class HeapDict:
         heappush(self._lst, self._dict, (priority, key), debug=debug)
 
     def pop(self, debug=False):
-        heappop(self._lst, self._dict, debug=debug)
+        return heappop(self._lst, self._dict, debug=debug)
 
     def update(self, priority, key, debug=False):
         heapupdate(self._lst, self._dict,  key, priority, debug=debug)
@@ -168,11 +168,14 @@ if __name__ == '__main__':
     hd.push(6, "rt")
     hd.push(7, "gh")
     hd.push(3, "ab")
-    hd.pop()
-    hd.pop()
-    hd.pop()
-    hd.pop()
     print(hd)
+    hd.update(10, "ab")
+    print(hd)
+    # hd.pop()
+    # hd.pop()
+    # hd.pop()
+    # hd.pop()
+    #print(hd)
     # heap = [None]
     # d = {}
     # print(heappush(heap, d, (6, "rt")))
