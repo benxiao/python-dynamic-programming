@@ -15,7 +15,6 @@ def right(x):
 def parent(x):
     return x >> 1
 
-
 def heapsink(_heap, _dict, idx, debug=False):
     """
     sink the item at idx
@@ -49,14 +48,19 @@ def heappop(_heap, _dict, debug=False):
         first = _heap[1]
         first_key, first_value = first
         del _dict[first_value]
-        _heap[1] = _heap.pop()
-        priority, key = _heap[1]
-        _dict[key] = 1
-
-        if len(_heap) > 1:
+        if len(_dict) == 0:
+            _heap.pop()
+        else:
+            _heap[1] = _heap.pop()
+            priority, key = _heap[1]
+            _dict[key] = 1
             heapsink(_heap, _dict, 1)
-    if debug:
-        check_invariants(_heap, _dict)
+        if debug:
+            check_invariants(_heap, _dict)
+        return first
+
+    else:
+        raise ValueError("heap is empty")
 
 
 def heapremove(_heap, _dict, key, debug=False):
@@ -160,11 +164,14 @@ class HeapDict:
 
 
 if __name__ == '__main__':
-
     hd = HeapDict()
     hd.push(6, "rt")
     hd.push(7, "gh")
     hd.push(3, "ab")
+    hd.pop()
+    hd.pop()
+    hd.pop()
+    hd.pop()
     print(hd)
     # heap = [None]
     # d = {}
