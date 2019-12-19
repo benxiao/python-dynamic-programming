@@ -10,26 +10,25 @@ NumbaBytesType = nb.typeof("".encode())
 def jit_edit_dist(b0: bytes, b1: bytes) -> nb.int32:
     m, n = len(b0), len(b1)
     cache = np.zeros((m + 1, n + 1))
-    for i in range(m + 1):
-        cache[i, 0] = i
+    for i in range(1, m + 1):
+        cache[i, 0] = cache[i-1, 0] + (2 if i < 2 else 1)
 
-    for j in range(n + 1):
-        cache[0, j] = j
+    for j in range(1, n + 1):
+        cache[0, j] = cache[0, j-1] + (2 if j < 2 else 1)
 
     for i, c0 in enumerate(b0):
         for j, c1 in enumerate(b1):
             if c0 == c1:
                 cache[i + 1, j + 1] = cache[i, j]
             else:
-                penalty = 2 if (i < 2 or j < 2) else 1
+                penalty = 2 if (i < 2 and j < 2) else 1
                 cache[i + 1, j + 1] = penalty + min(
                     cache[i, j + 1],  # insert
                     cache[i + 1, j],  # delete
                     cache[i, j]  # replace
                 )
-
                 # adjacent character transportation
-                if b0[i] == b1[j-1] and b0[i-1] == b1[j]:
+                if i > 2 and j > 2 and b0[i] == b1[j-1] and b0[i-1] == b1[j]:
                     cache[i+1, j+1] = min(
                         cache[i-1, i-1] + 1,
                         cache[i+1, j+1]
@@ -39,9 +38,7 @@ def jit_edit_dist(b0: bytes, b1: bytes) -> nb.int32:
                 if i > 0 and j > 0 and b0[i] == b0[i-1] and b1[j] == b1[j-1]:
                     cache[i+1, j+1] = min(
                         cache[i-1, i-1] + 1,
-                        cache[i+1, j+1]
-                    )
-
+                        cache[i+1, j+1])
     return cache[m, n]
 
 
@@ -69,5 +66,5 @@ def fast_lsc(s0: str, s1: str, encoding='utf-8') -> int:
 
 
 if __name__ == '__main__':
-    print(fast_edit_distance("abbcd", "aggcd"))
+    print(fast_edit_distance("abcfd", "acbfd"))
     print(fast_lsc("tr l", "trs l"))
