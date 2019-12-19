@@ -1,16 +1,18 @@
 from typing import *
 import random
 
+
 class TrieNode:
-    __slots__ = ['_count', '_links', '_end']
+    __slots__ = ['_overlay_count','_count', '_links', '_end']
 
     def __init__(self):
-        self._count = 1
+        self._overlay_count = 1
+        self._count = 0
         self._links = {}
         self._end = False
 
     def is_leave(self):
-        return not (self._links)
+        return not bool(self._links)
 
     def get_links(self):
         return self._links.keys()
@@ -18,7 +20,7 @@ class TrieNode:
     def link(self, ch):
         nxt = self._links.get(ch)
         if nxt:
-            nxt.incr()
+            nxt.incr_overlay()
             return nxt
         nxt = TrieNode()
         self._links[ch] = nxt
@@ -34,10 +36,16 @@ class TrieNode:
         nxt = self._links[ch]
         return nxt
 
+    def overlay_count(self):
+        return self._overlay_count
+
+    def incr_overlay(self):
+        self._overlay_count += 1
+
     def count(self):
         return self._count
 
-    def incr(self):
+    def incr_count(self):
         self._count += 1
 
 
@@ -54,11 +62,15 @@ class Trie:
         for c in value:
             cur = cur.link(c)
         cur.set_end()
+        cur.incr_count()
 
     def exist(self, value):
         cur = self.root
         for c in value:
-            cur = cur.path(c)
+            try:
+                cur = cur.path(c)
+            except KeyError:
+                return False
         return cur.is_end()
 
     def __len__(self):
@@ -70,7 +82,14 @@ class Trie:
             cur = cur.path(c)
         return cur.count()
 
-    def random_walk(self):
+
+    def overlay_count(self, value):
+        cur = self.root
+        for c in value:
+            cur = cur.path(c)
+        return cur.overlay_count()
+
+    def random(self):
         cur = self.root
         characters = []
         while 1:
@@ -81,8 +100,7 @@ class Trie:
                 return "".join(characters), cur.count()
 
     def random_elements(self, n=5):
-        return [self.random_walk() for _ in range(n)]
-
+        return [self.random() for _ in range(n)]
 
 
 if __name__ == '__main__':
