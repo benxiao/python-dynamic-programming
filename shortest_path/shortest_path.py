@@ -48,7 +48,8 @@ def bellman_ford(edges, V, src):
     for i in range(V-1):
         for e, w in edges.items():
             ef, et = e
-            if (relaxed_weight := cache[ef] + w) < cache[et]:
+            relaxed_weight = cache[ef] + w
+            if relaxed_weight  < cache[et]:
                 cache[et] = relaxed_weight
                 prev[et] = ef
 
