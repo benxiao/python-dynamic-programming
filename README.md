@@ -1,3 +1,3 @@
-# use bottom up approach to solve common dp problems
+# use bottom up approach to solve common dp problems in python
 
-## with some of the code speeded up with numba jit compiler.
+## str_cmp is speeded up using Numba JIT compiler, bring the performance close to compiled languages
