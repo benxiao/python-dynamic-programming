@@ -80,5 +80,5 @@ def fast_hamming_distance(s0: str, s1: str, encoding="utf-8") -> int:
 
 if __name__ == '__main__':
     print(fast_edit_distance("abcfd", "acbfd"))
-    print(fast_lsc("tr l", "trs l"))
+    print(fast_lsc_similarity("tr l", "trs l"))
     print(fast_hamming_distance("abcd", "abcdef"))
