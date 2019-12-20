@@ -3,6 +3,7 @@ import numba as nb
 import numpy as np
 from timeit import timeit
 
+
 def coins(n: int, choices: List):
     array = [0] * (n + 1)
     for i in range(1, n + 1):
