@@ -15,7 +15,7 @@ def jit_hamming_distance(b0: NumbaBytesType, b1: NumbaBytesType) -> nb.int32:
 
 
 @njit(nb.int32(NumbaBytesType, NumbaBytesType))
-def jit_edit_dist(b0: NumbaBytesType, b1: NumbaBytesType) -> nb.int32:
+def jit_edit_distance(b0: NumbaBytesType, b1: NumbaBytesType) -> nb.int32:
     m, n = len(b0), len(b1)
     cache = np.zeros((m + 1, n + 1))
     for i in range(1, m + 1):
@@ -67,7 +67,7 @@ def jit_lsc_similarity(b0: NumbaBytesType, b1: NumbaBytesType) -> nb.int32:
 
 
 def fast_edit_distance(s0: str, s1: str, encoding='utf-8') -> int:
-    return jit_edit_dist(s0.encode(encoding), s1.encode(encoding))
+    return jit_edit_distance(s0.encode(encoding), s1.encode(encoding))
 
 
 def fast_lsc_similarity(s0: str, s1: str, encoding='utf-8') -> int:
