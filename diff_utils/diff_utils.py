@@ -25,24 +25,41 @@ def dp_diff_utils(s0: str, s1: str):
         if i > 0 and j > 0 and s0[i-1] == s1[j-1]:
             options.append(((i-1, j-1),
                             cache[i-1][j-1],
-                            s0[i-1]
+                            f" {s0[i-1]}"
                             ))
         if i > 0:
             options.append(((i-1, j),
                             cache[i-1][j],
-                            f"(-{s0[i - 1]})"
+                            f"-{s0[i - 1]}"
                             ))
         if j > 0:
             options.append(((i, j-1),
                             cache[i][j-1],
-                            f"(+{s1[j - 1]})"
+                            f"+{s1[j - 1]}"
                             ))
         best_options = min(options, key=lambda x: x[1])
         i, j = best_options[0]
         result.append(best_options[2])
 
-    return cache[m][n], "".join(reversed(result))
+    result = list(reversed(result))
+    joined_result = []
+    for sign , ch in result:
+        if joined_result:
+            prev = joined_result.pop()
+            prev_sign = prev[0]
+            if prev_sign == sign:
+                joined_result.append(prev+ch)
+            else:
+                joined_result.append(prev)
+                joined_result.append(sign+ch)
+
+        else:
+            joined_result.append(sign+ch)
+
+    joined_result = [x[1:] if x.startswith(" ") else x for x in joined_result]
+    joined_result = [f"({x})" if x[0] in ("+", "-") else x for x in joined_result]
+    return "".join(joined_result)
 
 
 if __name__ == "__main__":
-    print(dp_diff_utils("abcd", "acd"))
+    print(dp_diff_utils("Janelle", "Jenalle"))
