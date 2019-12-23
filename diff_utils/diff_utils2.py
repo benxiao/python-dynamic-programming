@@ -19,17 +19,24 @@ def dp_diff_utils(s0: str, s1: str):
                 cache[i + 1][j + 1] = 1 + min(
                     cache[i][j + 1],  # insert
                     cache[i + 1][j],  # delete
+                    cache[i][j] # replace
                 )
 
     i, j = m, n
     result = []
     while i > 0 or j > 0:
         options = []
-        if i > 0 and j > 0 and s0[i-1] == s1[j-1]:
-            options.append(((i-1, j-1),
-                            cache[i-1][j-1],
-                            f" {s0[i-1]}"
-                            ))
+        if i > 0 and j > 0:
+            if s0[i-1] == s1[j-1]:
+                options.append(((i-1, j-1),
+                                cache[i-1][j-1],
+                                f" {s0[i-1]}"
+                                ))
+            else:
+                options.append(((i-1, j-1),
+                                cache[i-1][j-1],
+                                f"${s0[i-1] + s1[j-1]}"
+                                ))
         if i > 0:
             options.append(((i-1, j),
                             cache[i-1][j],
@@ -46,7 +53,8 @@ def dp_diff_utils(s0: str, s1: str):
 
     result = list(reversed(result))
     joined_result = []
-    for sign , ch in result:
+    for seg in result:
+        sign, ch = seg[0], seg[1:]
         if joined_result:
             prev = joined_result.pop()
             prev_sign = prev[0]
@@ -59,11 +67,12 @@ def dp_diff_utils(s0: str, s1: str):
         else:
             joined_result.append(sign+ch)
 
-    joined_result = [x[1:] if x.startswith(" ") else x for x in joined_result]
-    joined_result = [f"({x})" if x[0] in ("+", "-") else x for x in joined_result]
-    return "".join(joined_result)
+    process_with_matched_characters = [x[1:] if x.startswith(" ") else x for x in joined_result]
+    process_with_adds_and_removes = [f"({x})" if x[0] in ("+", "-") else x for x in process_with_matched_characters]
+    process_with_replacements = [f"({x[1::2]}->{x[2::2]})" if x.startswith("$") else x for x in process_with_adds_and_removes]
+    return "".join(process_with_replacements)
 
 
 if __name__ == "__main__":
     print(dp_diff_utils("ummuzahira kamaldeen", "ummuzahira hanifamohamedkamaldeen"))
-    print(dp_diff_utils("janelle", "jenalle"))
+    print(dp_diff_utils("aagelle", "jaefelle"))
