@@ -63,14 +63,13 @@ def dp_diff_utils(s0: str, s1: str):
             else:
                 joined_result.append(prev)
                 joined_result.append(sign+ch)
-
         else:
             joined_result.append(sign+ch)
 
-    process_with_matched_characters = [x[1:] if x.startswith(" ") else x for x in joined_result]
-    process_with_adds_and_removes = [f"({x})" if x[0] in ("+", "-") else x for x in process_with_matched_characters]
-    process_with_replacements = [f"({x[1::2]}->{x[2::2]})" if x.startswith("$") else x for x in process_with_adds_and_removes]
-    return "".join(process_with_replacements)
+    processing_matched_characters = [x[1:] if x.startswith(" ") else x for x in joined_result]
+    processing_adds_and_removes = [f"({x})" if x[0] in ("+", "-") else x for x in processing_matched_characters]
+    processing_replacements = [f"({x[1::2]}->{x[2::2]})" if x.startswith("$") else x for x in processing_adds_and_removes]
+    return "".join(processing_replacements)
 
 
 if __name__ == "__main__":
