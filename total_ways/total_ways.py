@@ -36,7 +36,7 @@ def dp_total(n, lst):
                     if e and e[-1] > c:
                         continue
                     cache_items[k].append([*e, c])
-                cache[k] += cache[k-c]
+                    cache[k] += 1
 
     return cache, cache_items
 
