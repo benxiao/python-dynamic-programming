@@ -15,6 +15,7 @@ def right(x):
 def parent(x):
     return x >> 1
 
+
 def heapsink(_heap, _dict, idx, debug=False):
     """
     sink the item at idx
@@ -108,11 +109,10 @@ def heapfloat(_heap, _dict, idx, debug=False):
         check_invariants(_heap, _dict)
 
 
-def heappush(_heap, _dict, item, debug=False):
+def heappush(_heap, _dict, key, priority, debug=False):
     """
     push a new item on the _heap
     """
-    priority, key = item
     if _dict.get(key):
         raise ValueError()
 
@@ -154,7 +154,7 @@ class HeapDict:
         return str(self._lst) + "\n" + str(self._dict)
 
     def push(self, priority, key, debug=False):
-        heappush(self._lst, self._dict, (priority, key), debug=debug)
+        heappush(self._lst, self._dict, key, priority, debug=debug)
 
     def pop(self, debug=False):
         return heappop(self._lst, self._dict, debug=debug)
