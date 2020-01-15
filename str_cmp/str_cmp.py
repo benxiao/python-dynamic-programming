@@ -37,16 +37,16 @@ def jit_edit_distance(b0: NumbaBytesType, b1: NumbaBytesType) -> nb.int32:
                 )
                 # damerau levenshtein
                 # adjacent character transportation
-                if i > 2 and j > 2 and b0[i] == b1[j - 1] and b0[i - 1] == b1[j]:
+                if i > 2 and j > 2 and b0[i] == b1[j - 1] and b0[j] == b1[i-1]:
                     cache[i + 1, j + 1] = min(
-                        cache[i - 1, i - 1] + 1,
+                        cache[i - 1, j - 1] + 1,
                         cache[i + 1, j + 1]
                     )
 
                 # two repeats characters counts
                 if i > 0 and j > 0 and b0[i] == b0[i - 1] and b1[j] == b1[j - 1]:
                     cache[i + 1, j + 1] = min(
-                        cache[i - 1, i - 1] + 1,
+                        cache[i - 1, j - 1] + 1,
                         cache[i + 1, j + 1])
     return cache[m, n]
 
