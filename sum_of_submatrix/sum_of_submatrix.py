@@ -6,29 +6,30 @@ the given matrix, calculate the sum of all elements present in the
 sub-matrix
 """
 
-
 class FastSum:
     def __init__(self, lst):
-        self.lst = lst
-        self.rows = len(self.lst)
-        self.cols = len(self.lst[0])
+        self.rows = len(lst)
+        self.cols = len(lst[0])
         self.cache = [[0] * self.cols for _ in range(self.rows)]
+        self._preproc(lst)
+
+    def _preproc(self, lst):
         for i in range(self.rows):
-            self.cache[i][0] = self.lst[i][0]
+            self.cache[i][0] = lst[i][0]
 
         for i in range(1, self.rows):
             self.cache[i][0] += self.cache[i - 1][0]
 
         for i in range(self.cols):
-            self.cache[0][i] = self.lst[0][i]
+            self.cache[0][i] = lst[0][i]
 
         for i in range(1, self.cols):
             self.cache[0][i] += self.cache[0][i - 1]
 
         for i in range(1, self.rows):
             for j in range(1, self.cols):
-                self.cache[i][j] = self.cache[i - 1][j] +\
-                                   self.cache[i][j - 1] -\
+                self.cache[i][j] = self.cache[i - 1][j] + \
+                                   self.cache[i][j - 1] - \
                                    self.cache[i - 1][j - 1] + lst[i][j]
 
     def get(self, top_left, bottom_right):
@@ -48,10 +49,10 @@ class FastSum:
         (self.cache[tl_r-1][br_c-1] if tl_c > 0 else 0) +\
         (self.cache[tl_r-1][tl_c-1] if tl_r > 0 and tl_c> 0 else 0)
 
-    def __getitem__(self, slices):
-        if len(slices) != 2:
+    def __getitem__(self, slice_tuple):
+        if len(slice_tuple) != 2:
             raise ValueError("takes two slices")
-        row_slice, column_slice = slices
+        row_slice, column_slice = slice_tuple
         if row_slice.step or column_slice.step:
             raise NotImplementedError("step is not supported")
 
@@ -76,5 +77,5 @@ if __name__ == '__main__':
     fs = FastSum(lst)
     print(fs.get((0,0), (2, 2)))
 
-    print(fs[0:2, 0:2])
+    print(fs[2:2, 2:2])
     print(fs[:2, :2])
