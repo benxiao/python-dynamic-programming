@@ -153,56 +153,26 @@ class HeapDict:
     def __str__(self):
         return str(self._lst) + "\n" + str(self._dict)
 
-    def push(self, priority, key, debug=False):
+    def push(self, key, priority, debug=False):
         heappush(self._lst, self._dict, key, priority, debug=debug)
 
     def pop(self, debug=False):
         return heappop(self._lst, self._dict, debug=debug)
 
-    def update(self, priority, key, debug=False):
+    def update(self, key, priority, debug=False):
         heapupdate(self._lst, self._dict,  key, priority, debug=debug)
 
 
 if __name__ == '__main__':
     hd = HeapDict()
-    hd.push(6, "rt")
-    hd.push(7, "gh")
-    hd.push(3, "ab")
+    hd.push("a", 6)
+    hd.push("b", 7)
+    hd.push("c", 3)
     print(hd)
-    hd.update(10, "ab")
+    hd.pop()
     print(hd)
-    # hd.pop()
-    # hd.pop()
-    # hd.pop()
-    # hd.pop()
-    #print(hd)
-    # heap = [None]
-    # d = {}
-    # print(heappush(heap, d, (6, "rt")))
-    #
-    # print(heappush(heap, d, (7, "gh")))
-    # print(heappush(heap, d, (3, "ab")))
-    # print(d)
-    # print(heap)
-    # print(heappush(heap, d, (2, "kl")))
-    # print(d)
-    # print(heap)
-    # print(heappush(heap, d, (1, "gkl")))
-    # print(heappush(heap, d, (4, "lo")))
-    #
-    # print(d)
-    # print(heap)
-    # print(heapremove(heap, d, 'gh'))
-    #
-    # print(d)
-    # print(heap)
-    # print(heappop(heap, d))
-    #
-    # print(d)
-    # print(heap)
-    #
-    # print(heapupdate(heap, d, 'kl', 10))
-    #
-    # print(d)
-    # print(heap)
-
+    hd.pop()
+    print(hd)
+    hd.pop()
+    print(hd)
+    p

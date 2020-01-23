@@ -19,7 +19,6 @@ def dp_lps(seq):
             start, end = j, i+j
             if seq[start] == seq[end]:
                 cache[start][end] = 2 + (cache[start+1][end-1] if end >= start+2 else 0)
-
             else:
                 cache[start][end] = max(cache[start+1][end], cache[start][end-1])
 

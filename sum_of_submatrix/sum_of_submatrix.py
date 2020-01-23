@@ -6,7 +6,22 @@ the given matrix, calculate the sum of all elements present in the
 sub-matrix
 """
 
-class FastSum:
+class FastSum1d:
+    def __init__(self, lst):
+        cache = lst.copy()
+        for i in range(1, len(lst)):
+            cache[i] += cache[i-1]
+        self.cache = cache
+
+    def get(self, start, stop):
+        assert 0 <= start < len(self.cache)
+        assert 0 <= stop < len(self.cache)
+        return (self.cache[stop-1] if stop > 0 else 0) -\
+               (self.cache[start-1] if start > 0 else 0)
+
+
+
+class FastSum2d:
     def __init__(self, lst):
         self.rows = len(lst)
         self.cols = len(lst[0])
@@ -28,9 +43,10 @@ class FastSum:
 
         for i in range(1, self.rows):
             for j in range(1, self.cols):
-                self.cache[i][j] = self.cache[i - 1][j] + \
-                                   self.cache[i][j - 1] - \
-                                   self.cache[i - 1][j - 1] + lst[i][j]
+                self.cache[i][j] = self.cache[i - 1][j] +\
+                                   self.cache[i][j - 1] -\
+                                   self.cache[i - 1][j - 1] +\
+                                   lst[i][j]
 
     def get(self, top_left, bottom_right):
         tl_r, tl_c = top_left # [)
@@ -74,8 +90,11 @@ if __name__ == '__main__':
         [1, 5, 7, 9, 4]
     ]
 
-    fs = FastSum(lst)
+    fs = FastSum2d(lst)
     print(fs.get((0,0), (2, 2)))
 
     print(fs[2:2, 2:2])
     print(fs[:2, :2])
+
+    fs1d = FastSum1d([1,2,3,4,5])
+    print(fs1d.get(0,4))
