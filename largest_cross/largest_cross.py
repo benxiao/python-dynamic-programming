@@ -10,9 +10,12 @@ a = np.array([
     [0, 0, 1, 0, 0],
     [0, 0, 1, 0, 0]
 ], dtype='b1')
-print(a.dtype)
 
 Numba2dBooleanArray = nb.typeof(a)
+
+
+print(a.dtype)
+print(Numba2dBooleanArray)
 
 
 @nb.njit(nb.uint32(Numba2dBooleanArray))
