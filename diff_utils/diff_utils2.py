@@ -65,7 +65,7 @@ def dp_diff_utils(s0: str, s1: str):
                 joined_result.append(sign+ch)
         else:
             joined_result.append(sign+ch)
-
+    # print(cache)
     processing_matched_characters = [x[1:] if x.startswith(" ") else x for x in joined_result]
     processing_adds_and_removes = [f"({x})" if x[0] in ("+", "-") else x for x in processing_matched_characters]
     processing_replacements = [f"({x[1::2]}->{x[2::2]})" if x.startswith("$") else x for x in processing_adds_and_removes]
@@ -73,5 +73,8 @@ def dp_diff_utils(s0: str, s1: str):
 
 
 if __name__ == "__main__":
+    print("*** demo ***")
     print(dp_diff_utils("ummuzahira kamaldeen", "ummuzahira hanifamohamedkamaldeen"))
-    print(dp_diff_utils("aagelle", "jaefelle"))
+    print(dp_diff_utils("Jane", "Jene"))
+    print(dp_diff_utils("janelle", "jenalle"))
+    print(dp_diff_utils("Jenny", "Jeny"))
