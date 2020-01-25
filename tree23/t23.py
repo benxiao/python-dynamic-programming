@@ -2,10 +2,10 @@ from typing import *
 
 
 class SingleNode:
-    def __init__(self, key):
+    def __init__(self, key, left=None, right=None):
         self.key = key
-        self.left = None
-        self.right = None
+        self.left = left
+        self.right = right
 
     def is_leave(self):
         return (not self.left) and (not self.right)
@@ -15,12 +15,13 @@ class SingleNode:
 
 
 class DoubleNode:
-    def __init__(self, left_key, right_key):
+    def __init__(self, left_key, right_key,
+                 left=None, middle=None, right=None):
         self.left_key = left_key
         self.right_key = right_key
-        self.left = None
-        self.middle = None
-        self.right = None
+        self.left = left
+        self.middle = middle
+        self.right = right
 
     def is_leave(self):
         return (not self.left) and (not self.middle) and (not self.right)
@@ -30,20 +31,21 @@ class DoubleNode:
 
 
 class TripleNode:
-    def __init__(self, left_key, middle_key, right_key):
+    def __init__(self, left_key, middle_key, right_key,
+                 most_left=None, left=None, right=None, most_right=None):
         self.left_key = left_key
         self.right_key = right_key
         self.middle_key = middle_key
-        self.most_left = None
-        self.left = None
-        self.right = None
-        self.most_right = None
+        self.most_left = most_left
+        self.left = left
+        self.right = right
+        self.most_right = most_right
 
     def is_leave(self):
         return (not self.most_left) and (not self.left) and (not self.right) and (not self.most_right)
 
 
-def r_exists(tree:Union[SingleNode, DoubleNode, None], key) -> bool:
+def r_exists(tree: Union[SingleNode, DoubleNode, None], key) -> bool:
     if tree is None:
         return False
     if isinstance(tree, SingleNode):
@@ -61,7 +63,7 @@ def r_exists(tree:Union[SingleNode, DoubleNode, None], key) -> bool:
     return True
 
 
-def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key)->Union[SingleNode, DoubleNode, TripleNode]:
+def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key) -> Union[SingleNode, DoubleNode, TripleNode]:
     if tree is None:
         return SingleNode(key)
 
@@ -76,15 +78,19 @@ def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key)->Union[Single
                 left_subtree = r_insert(tree.left, key)
                 if isinstance(left_subtree, TripleNode):
                     ####
-                    new_node = DoubleNode(left_subtree.middle_key, tree.key)
-                    new_node.left = SingleNode(left_subtree.left_key)
-                    new_node.middle = SingleNode(left_subtree.right_key)
+
+                    new_left = SingleNode(left_subtree.left_key,
+                                          left=left_subtree.most_left,
+                                          right=left_subtree.left)
+
+                    new_middle = SingleNode(left_subtree.right_key,
+                                            left=left_subtree.right,
+                                            right=left_subtree.most_right)
                     ####
-                    new_node.left.left = left_subtree.most_left
-                    new_node.left.right = left_subtree.left
-                    new_node.middle.left = left_subtree.right
-                    new_node.middle.right = left_subtree.most_right
-                    new_node.right = tree.right
+                    new_node = DoubleNode(left_subtree.middle_key, tree.key,
+                                          left=new_left,
+                                          middle=new_middle,
+                                          right=tree.right)
                     return new_node
                 else:
                     tree.left = left_subtree
@@ -93,15 +99,18 @@ def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key)->Union[Single
                 right_subtree = r_insert(tree.right, key)
                 if isinstance(right_subtree, TripleNode):
                     ####
-                    new_node = DoubleNode(tree.key, right_subtree.middle_key)
-                    new_node.right = SingleNode(right_subtree.right_key)
-                    new_node.middle = SingleNode(right_subtree.left_key)
-                    ####
-                    new_node.right.right = right_subtree.most_right
-                    new_node.right.left = right_subtree.right
-                    new_node.middle.left = right_subtree.most_left
-                    new_node.middle.right = right_subtree.left
-                    new_node.left = tree.left
+
+                    new_right = SingleNode(right_subtree.right_key,
+                                           left=right_subtree.right,
+                                           right=right_subtree.most_right)
+                    new_middle = SingleNode(right_subtree.left_key,
+                                            left=right_subtree.most_left,
+                                            right=right_subtree.left
+                                            )
+                    new_node = DoubleNode(tree.key, right_subtree.middle_key,
+                                          left=tree.left,
+                                          middle=new_middle,
+                                          right=new_right)
                     return new_node
                 else:
                     tree.right = right_subtree
@@ -119,15 +128,18 @@ def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key)->Union[Single
             if key < tree.left_key:
                 left_subtree = r_insert(tree.left, key)
                 if isinstance(left_subtree, TripleNode):
-                    new_node = TripleNode(left_subtree.middle_key, tree.left_key, tree.right_key)
-                    new_node.most_left = SingleNode(left_subtree.left_key)
-                    new_node.left = SingleNode(left_subtree.right_key)
-                    new_node.most_left.left = left_subtree.most_left
-                    new_node.most_left.right = left_subtree.left
-                    new_node.left.left = left_subtree.right
-                    new_node.left.right = left_subtree.most_right
-                    new_node.right = tree.middle
-                    new_node.most_right = tree.right
+                    new_most_left = SingleNode(left_subtree.left_key,
+                                               left=left_subtree.most_left,
+                                               right=left_subtree.left)
+                    new_left = SingleNode(left_subtree.right_key,
+                                          left=left_subtree.right,
+                                          right=left_subtree.most_right)
+
+                    new_node = TripleNode(left_subtree.middle_key, tree.left_key, tree.right_key,
+                                          most_left=new_most_left,
+                                          left=new_left,
+                                          right=tree.middle,
+                                          most_right=tree.right)
                     return new_node
                 else:
                     tree.left = left_subtree
@@ -135,15 +147,18 @@ def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key)->Union[Single
             elif key > tree.right_key:
                 right_subtree = r_insert(tree.right, key)
                 if isinstance(right_subtree, TripleNode):
-                    new_node = TripleNode(tree.left_key, tree.right_key, right_subtree.middle_key)
-                    new_node.right = SingleNode(right_subtree.left_key)
-                    new_node.most_right = SingleNode(right_subtree.right_key)
-                    new_node.right.left = right_subtree.most_left
-                    new_node.right.right = right_subtree.left
-                    new_node.most_right.left = right_subtree.right
-                    new_node.most_right.right = right_subtree.most_right
-                    new_node.most_left = tree.left
-                    new_node.left = tree.middle
+                    new_right = SingleNode(right_subtree.left_key,
+                                           left=right_subtree.most_left,
+                                           right=right_subtree.left)
+                    new_most_right = SingleNode(right_subtree.right_key,
+                                                left=right_subtree.right,
+                                                right=right_subtree.most_right)
+
+                    new_node = TripleNode(tree.left_key, tree.right_key, right_subtree.middle_key,
+                                          most_left=tree.left,
+                                          left=tree.middle,
+                                          right=new_right,
+                                          most_right=new_most_right)
                     return new_node
                 else:
                     tree.right = right_subtree
@@ -152,15 +167,18 @@ def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key)->Union[Single
             else:
                 middle_subtree = r_insert(tree.middle, key)
                 if isinstance(middle_subtree, TripleNode):
-                    new_node = TripleNode(tree.left_key, middle_subtree.middle_key, tree.right_key)
-                    new_node.left = SingleNode(middle_subtree.left_key)
-                    new_node.right = SingleNode(middle_subtree.right_key)
-                    new_node.left.left = middle_subtree.most_left
-                    new_node.left.right = middle_subtree.left
-                    new_node.right.left = middle_subtree.right
-                    new_node.right.right = middle_subtree.most_right
-                    new_node.most_left = middle_subtree.most_left
-                    new_node.most_right = middle_subtree.most_right
+                    new_left = SingleNode(middle_subtree.left_key,
+                                          left=middle_subtree.most_left,
+                                          right=middle_subtree.left)
+                    new_right = SingleNode(middle_subtree.right_key,
+                                           left=middle_subtree.right,
+                                           right=middle_subtree.most_right)
+
+                    new_node = TripleNode(tree.left_key, middle_subtree.middle_key, tree.right_key,
+                                          most_left=tree.left,
+                                          left=new_left,
+                                          right=new_right,
+                                          most_right=tree.right)
                     return new_node
                 else:
                     tree.middle = middle_subtree
@@ -174,13 +192,18 @@ class Tree23:
     def insert(self, key):
         tree = r_insert(self.tree, key)
         if isinstance(tree, TripleNode):
-            new_node = SingleNode(tree.middle_key)
-            new_node.left = SingleNode(tree.left_key)
-            new_node.right = SingleNode(tree.right_key)
-            new_node.left.left = tree.most_left
-            new_node.left.right = tree.left
-            new_node.right.left = tree.right
-            new_node.right.right = tree.most_right
+
+            new_left = SingleNode(tree.left_key,
+                                  left=tree.most_left,
+                                  right=tree.left)
+            
+            new_right = SingleNode(tree.right_key,
+                                   left=tree.right,
+                                   right=tree.most_right)
+
+            new_node = SingleNode(tree.middle_key,
+                                  left=new_left,
+                                  right=new_right)
             self.tree = new_node
         else:
             self.tree = tree
