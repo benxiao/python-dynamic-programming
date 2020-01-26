@@ -228,6 +228,9 @@ class Tree23:
                                   right=new_right)
             self.tree = new_node
 
+    def remove(self, key):
+        pass
+
     def __str__(self):
         if self.tree:
             return str(self.tree)

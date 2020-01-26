@@ -82,7 +82,6 @@ class Trie:
             cur = cur.path(c)
         return cur.count()
 
-
     def overlay_count(self, value):
         cur = self.root
         for c in value:
