@@ -65,6 +65,20 @@ def r_exists(tree: Union[SingleNode, DoubleNode, None], key) -> bool:
     return True
 
 
+def r_depth(tree):
+    if tree is None:
+        return 0
+
+    elif isinstance(tree, SingleNode):
+        return max(r_depth(tree.left), r_depth(tree.right)) + 1
+
+    elif isinstance(tree, DoubleNode):
+        return max(r_depth(x) for x in [tree.left, tree.middle, tree.right]) + 1
+
+    else:
+        raise ValueError()
+
+
 def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key) -> Union[SingleNode, DoubleNode, TripleNode]:
     if tree is None:
         return SingleNode(key)
@@ -222,31 +236,38 @@ class Tree23:
     def exists(self, key):
         return r_exists(self.tree, key)
 
+    def depth(self):
+        return r_depth(self.tree)
+
 
 if __name__ == '__main__':
     tree = Tree23()
-    tree.insert(50)
-    print(tree)
-    tree.insert(60)
-    print(tree)
-    tree.insert(70)
-    print(tree)
-    tree.insert(30)
-    print(tree)
-    tree.insert(40)
-    print(tree)
-    tree.insert(20)
-    print(tree)
-    tree.insert(10)
-    print(tree)
-    tree.insert(80)
-    print(tree)
-    tree.insert(90)
-    print(tree)
-    tree.insert(75)
-    print(tree)
-    tree.insert(78)
-    print(tree)
-
-    print(tree.exists(10))
-    print(tree.exists(100))
+    for i in range(200):
+        tree.insert(i)
+        print(tree)
+        print(tree.depth())
+    # tree.insert(50)
+    # print(tree)
+    # tree.insert(60)
+    # print(tree)
+    # tree.insert(70)
+    # print(tree)
+    # tree.insert(30)
+    # print(tree)
+    # tree.insert(40)
+    # print(tree)
+    # tree.insert(20)
+    # print(tree)
+    # tree.insert(10)
+    # print(tree)
+    # tree.insert(80)
+    # print(tree)
+    # tree.insert(90)
+    # print(tree)
+    # tree.insert(75)
+    # print(tree)
+    # tree.insert(78)
+    # print(tree)
+    #
+    # print(tree.exists(10))
+    # print(tree.exists(100))
