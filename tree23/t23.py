@@ -48,11 +48,13 @@ class TripleNode:
 def r_exists(tree: Union[SingleNode, DoubleNode, None], key) -> bool:
     if tree is None:
         return False
-    if isinstance(tree, SingleNode):
+
+    elif isinstance(tree, SingleNode):
         if key < tree.key:
             return r_exists(tree.left, key)
         elif key > tree.key:
             return r_exists(tree.right, key)
+
     elif isinstance(tree, DoubleNode):
         if key < tree.left_key:
             return r_exists(tree.left, key)
@@ -183,6 +185,8 @@ def r_insert(tree: Union[SingleNode, DoubleNode, TripleNode], key) -> Union[Sing
                 else:
                     tree.middle = middle_subtree
                     return tree
+    else:
+        raise TypeError(f"wtf {type(tree)} {tree}")
 
 
 class Tree23:
@@ -190,13 +194,17 @@ class Tree23:
         self.tree: Union[SingleNode, DoubleNode, None] = None
 
     def insert(self, key):
+        if self.exists(key):
+            raise ValueError(f"key {key} already exists")
+
         tree = r_insert(self.tree, key)
-        if isinstance(tree, TripleNode):
+        self.tree = tree
+        if isinstance(self.tree, TripleNode):
 
             new_left = SingleNode(tree.left_key,
                                   left=tree.most_left,
                                   right=tree.left)
-            
+
             new_right = SingleNode(tree.right_key,
                                    left=tree.right,
                                    right=tree.most_right)
@@ -205,8 +213,6 @@ class Tree23:
                                   left=new_left,
                                   right=new_right)
             self.tree = new_node
-        else:
-            self.tree = tree
 
     def __str__(self):
         if self.tree:
@@ -233,8 +239,14 @@ if __name__ == '__main__':
     print(tree)
     tree.insert(10)
     print(tree)
+    tree.insert(80)
+    print(tree)
+    tree.insert(90)
+    print(tree)
+    tree.insert(75)
+    print(tree)
+    tree.insert(78)
+    print(tree)
 
     print(tree.exists(10))
     print(tree.exists(100))
-
-
