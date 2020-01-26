@@ -24,10 +24,20 @@ def minimum_jumps(a, start, end):
 
 
 def dp_minimum_jumps(a):
-    pass
-
+    l = len(a)
+    cache = [float('inf')] * l
+    cache[0] = 0
+    for i in range(l-1):
+        for j in range(1, a[i]+1):
+            if j+i < l:
+                cache[j+i] = min(cache[i]+1, cache[j+i])
+    print(cache)
+    return cache[-1]
 
 
 if __name__ == '__main__':
     print(minimum_jumps(a0, 0, len(a0)-1))
+    print(dp_minimum_jumps(a0))
+
     print(minimum_jumps(a1, 0, len(a1)-1))
+    print(dp_minimum_jumps(a1))
