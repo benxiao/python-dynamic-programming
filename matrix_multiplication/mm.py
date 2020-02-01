@@ -62,11 +62,11 @@ def opt2(shapes, i, j):
     return minimum_ops
 
 
-
-def dp_opt(shapes, symbols):
+def dp_opt(shapes):
     # number of matrixes
     n = len(shapes)
     cache = [[0] * n for _ in range(n)]
+    symbols = [f'<{i}>' for i in range(n-1)]
     expression_cache = [[""] * n for _ in range(n)]
     for i in range(n - 2):
         cache[i][i + 2] = shapes[i] * shapes[i+1] * shapes[i+2]
@@ -84,21 +84,55 @@ def dp_opt(shapes, symbols):
                     if expression_cache[start][i] is "":
                         expression_cache[start][end] = f"{symbols[start]}({expression_cache[i][end]})"
                     if expression_cache[i][end] is "":
-                        expression_cache[start][end] = f"({expression_cache[start][i]}){symbols[end - 1]}"
+                        expression_cache[start][end] = f"({expression_cache[start][i]}){symbols[end-1]}"
 
             cache[start][end] = minimum_ops
 
-    # for row in cache:
-    #     print(row)
-    #
-    # for row in expression_cache:
-    #     print(row)
+    for row in cache:
+        print(row)
+
+    for row in expression_cache:
+        print(row)
     return cache[0][-1], expression_cache[0][-1]
 
 
+def move_zeros_to_the_back(array):
+    k = 0
+    l = len(array)
+    for i in range(l):
+        if array[i] != 0:
+            array[k] = array[i]
+            k += 1
+    array[k:l] = [0] * (l-k)
+
+    print(array)
+
+
+def move_zeros_to_the_back2(array):
+    result = [0] * len(array)
+    i = 0
+    for e in array:
+        if e != 0:
+            result[i] = e
+            i += 1
+
+    print(result)
+
+
+move_zeros_to_the_back([6, 0, 8, 2, 3, 0, 4, 0, 1])
+
+# 6, 0, 8, 2, 3, 0, 4
+# 6, 8, 0, 2, 3, 0, 4
+# 6, 8, 2, 3, 0, 0, 4
+#
+# def move_zeros
+#
+#
+
+
 if __name__ == '__main__':
-    print(dp_opt(shapes1, symbols))
-    print(dp_opt(shapes2, symbols))
+    print(dp_opt(shapes1))
+    print(dp_opt(shapes2))
 # print(mult([1,2,3]))
 
 """
