@@ -134,6 +134,7 @@ def dijkstra_algo_simplified(edges, V, src):
 
     return cache
 
+
 adjacent_matrix = \
     [[0, 4, 0, 0, 0, 0, 0, 8, 0],
      [4, 0, 8, 0, 0, 0, 0, 11, 0],

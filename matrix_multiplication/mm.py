@@ -21,6 +21,9 @@ dimensions2 = [(10, 20), (20, 30), (30, 40), (40, 30)]
 
 
 def opt(demensions, symbols):
+
+    assert len(dimensions) == len(symbols)
+
     if len(demensions) == 1:
         return 0, symbols[0]
     minimum_ops = float('inf')

@@ -11,7 +11,8 @@ B also plays optimally and A starts the game.
 
 from functools import lru_cache
 
-@lru_cache(maxsize=None)
+
+#@lru_cache(maxsize=None)
 def pot_of_gold(game, i, j, k):
     # k is used to flip between two players
     if i == j:
@@ -21,7 +22,7 @@ def pot_of_gold(game, i, j, k):
             return 0, game[i], [game[i]]
 
     lp0, lp1, lpath = pot_of_gold(game, i + 1, j, not k)
-    rp0, rp1, rpath = pot_of_gold(game, i, j-1, not k)
+    rp0, rp1, rpath = pot_of_gold(game, i, j - 1, not k)
 
     if k:
         if lp0 + game[i] > rp0 + game[j]:
@@ -36,12 +37,5 @@ def pot_of_gold(game, i, j, k):
             return rp0, rp1 + game[j], [game[j]] + rpath
 
 
-
-
-
-
-
-
 if __name__ == '__main__':
-    print(pot_of_gold(game, 0, 3, True))
-    print(pot_of_gold([6,1,4,9,8,5], 0, 5, False))
+    print(pot_of_gold([6, 1, 4, 9, 8, 5], 0, 5, False))

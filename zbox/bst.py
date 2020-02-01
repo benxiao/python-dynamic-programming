@@ -138,7 +138,9 @@ def perfect_balanced_insertion_sequence(keys, l, r):
 
 
 def tree_str(tree):
-    if tree is None: return '<empty tree>'
+    if tree is None:
+        return '<empty tree>'
+
     def recurse(node):
         if node is None: return [], 0, 0
         label = str(node.key)
