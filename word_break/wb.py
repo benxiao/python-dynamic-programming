@@ -5,13 +5,7 @@ def word_break(dictionary, text):
     l = len(text)
     cache = [[0] * l for _ in range(l)]
     word_cache = [[None for _ in range(l)] for _ in range(l)]
-
-    for i, c in enumerate(text):
-        cache[i][i] = int(c in dictionary)
-        if cache[i][i]:
-            word_cache[i][i] = [c]
-
-    for step in range(1, l):
+    for step in range(l):
         for start in range(l - step):
             start, end = start, start + step
             cache[start][end] = int(text[start: end+1] in dictionary)
@@ -27,4 +21,4 @@ def word_break(dictionary, text):
 
 
 
-word_break(dictionary, "abadass")
+print(word_break(dictionary, "abadass"))
