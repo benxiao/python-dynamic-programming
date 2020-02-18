@@ -37,30 +37,30 @@ class Node:
             cur = cur.next()
 
     def __str__(self):
-       return "->".join(str(x._val) for x in self)
+        return "->".join(str(x._val) for x in self)
 
     __repr__ = __str__
 
 
-def to_sll(x):
+def to_sll(lst):
     sentinel = Node(None)
     cur = sentinel
-    for e in x:
+    for e in lst:
         cur.set_next(Node(e))
         cur = cur.next()
     return sentinel.next()
 
 
-def partition(l):
-    val = l.val()
+def partition(sll):
+    val = sll.val()
     left_sentinel = Node(None)
     left_tail = left_sentinel
     right_sentinel = Node(None)
     right_tail = right_sentinel
-    if not l.next():
+    if not sll.next():
         return None, val, None
 
-    for node in l.next():
+    for node in sll.next():
         if node.val() < val:
             left_tail.set_next(node)
             left_tail = left_tail.next()
@@ -73,10 +73,10 @@ def partition(l):
     return left_sentinel.next(), val, right_sentinel.next()
 
 
-def qsort(l):
-    if l is None:
+def qsort(sll):
+    if sll is None:
         return None, None
-    left, val, right = partition(l)
+    left, val, right = partition(sll)
     pivot = Node(val)
     lfp, llp = qsort(left)
     rfp, rlp = qsort(right)
