@@ -1,4 +1,4 @@
-from collections import deque
+from typing import *
 
 
 class TreeNode:
@@ -28,9 +28,6 @@ class TreeNode:
                 left_lines.append(' ' * left_width)
             while len(right_lines) < len(left_lines):
                 right_lines.append(' ' * right_width)
-            # if (middle - len(label)) % 2 == 1 and node.parent is not None and \
-            #         node is node.parent.left and len(label) < middle:
-            #     label += '.'
             label = label.center(middle, '.')
             if label[0] == '.': label = ' ' + label[1:]
             if label[-1] == '.': label = label[:-1] + ' '
@@ -132,8 +129,17 @@ def prev_node(tree, val):
         return max_node(target.left)
     prev = None
     # prev_node is the parent node of target node
+    cur = tree
+    while cur:
+        if val < cur.val:
+            cur = cur.left
 
-
+        elif val > cur.val:
+            prev = cur
+            cur = cur.right
+        else:
+            break
+    return prev
 
 
 def next_node(tree, val):
@@ -152,6 +158,7 @@ def next_node(tree, val):
 
         elif val > cur.val:
             cur = cur.right
+
         else:
             break
     return succ
@@ -193,7 +200,9 @@ def insert(tree, val):
     return tree
 
 
-def tree_equal(tree0: TreeNode, tree1: TreeNode)->bool:
+
+
+def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
     if tree0 != tree1:
         return False
     left, right = True, True
@@ -222,20 +231,79 @@ def btree_count(tree):
     return 1 + btree_count(tree.left) + btree_count(tree.right)
 
 
+class AvlTreeSet:
+    def __init__(self, iterable: List=None):
+        self.tree = None
+        if not iterable:
+            return
+
+        for k in iterable:
+            self.tree = insert(self.tree, k)
+
+    def add(self, val):
+        self.tree = insert(self.tree, val)
+
+    def __str__(self):
+        if self.tree is None:
+            return "<empty>"
+        return str(self.tree)
+
+    def min(self):
+        if self.tree is None:
+            raise ValueError()
+        return min_node(self.tree).val
+
+    def max(self):
+        if self.tree is None:
+            raise ValueError()
+        return max_node(self.tree).val
+
+    def next_large(self, key):
+        n = next_node(self.tree, key)
+        if n is None:
+            return n
+        return n.val
+
+    def prev(self, key):
+        n = prev_node(self.tree, key)
+        if n is None:
+            return n
+        return n.val
+
+    def __len__(self):
+        return btree_count(self.tree)
+
+    def __eq__(self, other):
+        if not isinstance(other, AvlTreeSet):
+            return False
+
+        return tree_equal(self.tree, other.tree)
+
+
+
 
 
 if __name__ == '__main__':
     root = None
     import random
     random.seed(0)
+    tree = AvlTreeSet()
     for i in zip(range(20)):
-        root = insert(root, random.randint(1, 1000))
+        tree.add(random.randint(0, 1000))
+        print(tree)
         print()
-        print(root)
 
-    print()
-    print(get(root, 989))
+    key = tree.min()
+    while 1:
+        print(key)
+        key = tree.next_large(key)
+        if key is None:
+            break
 
-
-    print(min_node(root))
-    print(next_node(root, 914))
+    key = tree.max()
+    while 1:
+        print(key)
+        key = tree.prev(key)
+        if key is None:
+            break
+    print(len(tree))
