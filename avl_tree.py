@@ -2,7 +2,8 @@ from typing import *
 
 
 class TreeNode:
-    def __init__(self, val, left=None, right=None):
+    def __init__(self, key, val, left=None, right=None):
+        self.key = key
         self.val = val
         self.left = left
         self.right = right
@@ -11,7 +12,7 @@ class TreeNode:
     def __eq__(self, other):
         if not isinstance(other, TreeNode):
             return False
-        return self.val == other.val
+        return self.key == other.key
 
     def is_leave(self):
         return self.left is None and self.right is None
@@ -20,7 +21,7 @@ class TreeNode:
         if self is None: return '<empty tree>'
         def recurse(node):
             if node is None: return [], 0, 0
-            label = str((node.val, node.height))
+            label = str((node.key, node.height))
             left_lines, left_pos, left_width = recurse(node.left)
             right_lines, right_pos, right_width = recurse(node.right)
             middle = max(right_pos + left_width - left_pos + 1, len(label), 2)
@@ -90,7 +91,7 @@ def delete_min(tree):
         return tree.right
     tree.left = delete_min(tree.left)
     tree.height = height(tree)
-    return avl_rebalance(tree)
+    return apply_avl_rebalance(tree)
 
 
 def delete_max(tree):
@@ -98,7 +99,7 @@ def delete_max(tree):
         return tree.left
     tree.right = delete_max(tree.right)
     tree.height = height(tree)
-    return tree
+    return apply_avl_rebalance(tree)
 
 
 def min_node(tree):
@@ -177,7 +178,7 @@ def next_node(tree, val):
     return succ
 
 
-def avl_rebalance(tree):
+def apply_avl_rebalance(tree):
     if height(tree.left) > height(tree.right) + 1:
         if height(tree.left.left) > height(tree.left.right):
             tree = rotate_right(tree)
@@ -202,32 +203,34 @@ def avl_rebalance(tree):
     return tree
 
 
-def insert(tree, val):
+def insert(tree: TreeNode, key, val):
     if tree is None:
-        return TreeNode(val)
+        return TreeNode(key, val)
 
-    if val < tree.val:
-        tree.left = insert(tree.left, val)
+    if key < tree.key:
+        tree.left = insert(tree.left, key, val)
         tree.height = height(tree)
     else:
-        tree.right = insert(tree.right, val)
+        tree.right = insert(tree.right, key, val)
         tree.height = height(tree)
 
-    return avl_rebalance(tree)
+    return apply_avl_rebalance(tree)
 
 
 def tree_remove(tree:TreeNode, val: Any):
     if tree is None:
         return None
-    if val < tree.val:
+    if val < tree.key:
         tree.left = tree_remove(tree, val)
-    elif val > tree.val:
+    elif val > tree.key:
         tree.right = tree_remove(tree, val)
     else:
         if tree.left is None:
             return tree.right
         if tree.right is None:
             return tree.left
+
+    # toDo
 
 def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
     if tree0 != tree1:
@@ -267,20 +270,20 @@ def avl_invariants(tree):
     return avl_invariants(tree.left) and avl_invariants(tree.right)
 
 
-class AvlTreeSet:
-    def __init__(self, iterable: List=None):
+class AvlTreeMap:
+    def __init__(self, iterable: Dict=None):
         self.tree = None
         if not iterable:
             return
 
-        for k in iterable:
-            self.tree = insert(self.tree, k)
+        for k, v in iterable.items():
+            self.tree = insert(self.tree, k, v)
 
     def __bool__(self):
         return self.tree is not None
 
-    def add(self, val):
-        self.tree = insert(self.tree, val)
+    def add(self, key, val):
+        self.tree = insert(self.tree, key, val)
 
     def __str__(self):
         if self.tree is None:
@@ -313,7 +316,7 @@ class AvlTreeSet:
         return btree_count(self.tree)
 
     def __eq__(self, other):
-        if not isinstance(other, AvlTreeSet):
+        if not isinstance(other, AvlTreeMap):
             return False
 
         return tree_equal(self.tree, other.tree)
@@ -322,18 +325,13 @@ class AvlTreeSet:
         self.tree = delete_min(self.tree)
 
 
-
-
-
-
-
 if __name__ == '__main__':
     root = None
     import random
     random.seed(0)
-    tree = AvlTreeSet()
+    tree = AvlTreeMap()
     for i in zip(range(20)):
-        tree.add(random.randint(0, 1000))
+        tree.add(random.randint(0, 1000), 1)
         print(tree)
         print()
 
