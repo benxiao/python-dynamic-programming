@@ -13,9 +13,11 @@ class TreeNode:
             return False
         return self.val == other.val
 
+    def is_leave(self):
+        return self.left is None and self.right is None
+
     def __str__(self):
         if self is None: return '<empty tree>'
-
         def recurse(node):
             if node is None: return [], 0, 0
             label = str((node.val, node.height))
@@ -83,9 +85,20 @@ def height(tree):
     return max(left, right) + 1
 
 
-def delete(tree, val):
-    node = get(tree, val)
-    pass
+def delete_min(tree):
+    if tree.left is None:
+        return tree.right
+    tree.left = delete_min(tree.left)
+    tree.height = height(tree)
+    return avl_rebalance(tree)
+
+
+def delete_max(tree):
+    if tree.right is None:
+        return tree.left
+    tree.right = delete_max(tree.right)
+    tree.height = height(tree)
+    return tree
 
 
 def min_node(tree):
@@ -164,6 +177,31 @@ def next_node(tree, val):
     return succ
 
 
+def avl_rebalance(tree):
+    if height(tree.left) > height(tree.right) + 1:
+        if height(tree.left.left) > height(tree.left.right):
+            tree = rotate_right(tree)
+            tree.height = height(tree)
+        else:
+            tree.left = rotate_left(tree.left)
+            tree.left.height = height(tree.left)
+
+            tree = rotate_right(tree)
+            tree.height = height(tree)
+
+    elif height(tree.left) + 1 < height(tree.right):
+        if height(tree.right.right) > height(tree.right.left):
+            tree = rotate_left(tree)
+            tree.height = height(tree)
+        else:
+            tree.right = rotate_right(tree.right)
+            tree.right.height = height(tree.right)
+
+            tree = rotate_left(tree)
+            tree.height = height(tree)
+    return tree
+
+
 def insert(tree, val):
     if tree is None:
         return TreeNode(val)
@@ -175,32 +213,21 @@ def insert(tree, val):
         tree.right = insert(tree.right, val)
         tree.height = height(tree)
 
-    if height(tree.left) > height(tree.right)+1:
-        if height(tree.left.left) > height(tree.left.right):
-            tree = rotate_right(tree)
-            tree.height = height(tree)
-        else:
-            tree.left = rotate_left(tree.left)
-            tree.left.height = height(tree.left)
-
-            tree = rotate_right(tree)
-            tree.height = height(tree)
-
-    elif height(tree.left)+1 < height(tree.right):
-        if height(tree.right.right) > height(tree.right.left):
-            tree = rotate_left(tree)
-            tree.height = height(tree)
-        else:
-            tree.right = rotate_right(tree.right)
-            tree.right.height = height(tree.right)
-
-            tree = rotate_left(tree)
-            tree.height = height(tree)
-
-    return tree
+    return avl_rebalance(tree)
 
 
-
+def tree_remove(tree:TreeNode, val: Any):
+    if tree is None:
+        return None
+    if val < tree.val:
+        tree.left = tree_remove(tree, val)
+    elif val > tree.val:
+        tree.right = tree_remove(tree, val)
+    else:
+        if tree.left is None:
+            return tree.right
+        if tree.right is None:
+            return tree.left
 
 def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
     if tree0 != tree1:
@@ -231,6 +258,15 @@ def btree_count(tree):
     return 1 + btree_count(tree.left) + btree_count(tree.right)
 
 
+def avl_invariants(tree):
+    if tree is None:
+        return True
+    if abs(height(tree.left) - height(tree.right)) > 1:
+        return False
+
+    return avl_invariants(tree.left) and avl_invariants(tree.right)
+
+
 class AvlTreeSet:
     def __init__(self, iterable: List=None):
         self.tree = None
@@ -239,6 +275,9 @@ class AvlTreeSet:
 
         for k in iterable:
             self.tree = insert(self.tree, k)
+
+    def __bool__(self):
+        return self.tree is not None
 
     def add(self, val):
         self.tree = insert(self.tree, val)
@@ -279,6 +318,11 @@ class AvlTreeSet:
 
         return tree_equal(self.tree, other.tree)
 
+    def delete_min(self):
+        self.tree = delete_min(self.tree)
+
+
+
 
 
 
@@ -293,17 +337,30 @@ if __name__ == '__main__':
         print(tree)
         print()
 
-    key = tree.min()
-    while 1:
-        print(key)
-        key = tree.next_large(key)
-        if key is None:
-            break
+    while tree:
+        tree.delete_min()
+        print(tree)
+        print(end='\n'*2)
 
-    key = tree.max()
-    while 1:
-        print(key)
-        key = tree.prev(key)
-        if key is None:
-            break
-    print(len(tree))
+    # root = tree.tree
+    # root = delete_min(root)
+    # print(root)
+    # print()
+    # root = delete_min(root)
+    # print(root)
+    # print()
+
+    # key = tree.min()
+    # while 1:
+    #     print(key)
+    #     key = tree.next_large(key)
+    #     if key is None:
+    #         break
+    #
+    # key = tree.max()
+    # while 1:
+    #     print(key)
+    #     key = tree.prev(key)
+    #     if key is None:
+    #         break
+    # print(len(tree))
