@@ -19,6 +19,7 @@ class TreeNode:
 
     def __str__(self):
         if self is None: return '<empty tree>'
+
         def recurse(node):
             if node is None: return [], 0, 0
             label = str((node.key, node.height))
@@ -56,8 +57,8 @@ def rotate_right(y):
     y.left = t2
     y.right = t3
 
-    x.height = height(x)
     y.height = height(y)
+    x.height = height(x)
     return x
 
 
@@ -182,24 +183,16 @@ def apply_avl_rebalance(tree):
     if height(tree.left) > height(tree.right) + 1:
         if height(tree.left.left) > height(tree.left.right):
             tree = rotate_right(tree)
-            tree.height = height(tree)
         else:
             tree.left = rotate_left(tree.left)
-            tree.left.height = height(tree.left)
-
             tree = rotate_right(tree)
-            tree.height = height(tree)
 
     elif height(tree.left) + 1 < height(tree.right):
         if height(tree.right.right) > height(tree.right.left):
             tree = rotate_left(tree)
-            tree.height = height(tree)
         else:
             tree.right = rotate_right(tree.right)
-            tree.right.height = height(tree.right)
-
             tree = rotate_left(tree)
-            tree.height = height(tree)
     return tree
 
 
@@ -217,7 +210,7 @@ def insert(tree: TreeNode, key, val):
     return apply_avl_rebalance(tree)
 
 
-def tree_remove(tree:TreeNode, val: Any):
+def tree_remove(tree: TreeNode, val: Any):
     if tree is None:
         return None
     if val < tree.key:
@@ -231,6 +224,7 @@ def tree_remove(tree:TreeNode, val: Any):
             return tree.left
 
     # toDo
+
 
 def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
     if tree0 != tree1:
@@ -251,8 +245,8 @@ def btree_complete(tree, idx, count):
         return False
 
     else:
-        return btree_complete(tree.left, 2*idx, count) \
-            and btree_complete(tree.right, 2*idx+1, count)
+        return btree_complete(tree.left, 2 * idx, count) \
+               and btree_complete(tree.right, 2 * idx + 1, count)
 
 
 def btree_count(tree):
@@ -261,17 +255,25 @@ def btree_count(tree):
     return 1 + btree_count(tree.left) + btree_count(tree.right)
 
 
-def avl_invariants(tree):
+def check_avl_invariants(tree):
     if tree is None:
         return True
     if abs(height(tree.left) - height(tree.right)) > 1:
         return False
 
-    return avl_invariants(tree.left) and avl_invariants(tree.right)
+    return check_avl_invariants(tree.left) and check_avl_invariants(tree.right)
 
 
-class AvlTreeMap:
-    def __init__(self, iterable: Dict=None):
+def check_heights(tree):
+    if tree is None:
+        return True
+    if tree.height != max(height(tree.left), height(tree.right)) + 1:
+        return False
+    return check_heights(tree.left) and check_heights(tree.right)
+
+
+class AVLTreeMap:
+    def __init__(self, iterable: Dict = None):
         self.tree = None
         if not iterable:
             return
@@ -316,7 +318,7 @@ class AvlTreeMap:
         return btree_count(self.tree)
 
     def __eq__(self, other):
-        if not isinstance(other, AvlTreeMap):
+        if not isinstance(other, AVLTreeMap):
             return False
 
         return tree_equal(self.tree, other.tree)
@@ -324,21 +326,30 @@ class AvlTreeMap:
     def delete_min(self):
         self.tree = delete_min(self.tree)
 
+    def invariant_check(self):
+        heights_ok = check_heights(self.tree)
+        return heights_ok and check_avl_invariants(self.tree)
+
 
 if __name__ == '__main__':
     root = None
     import random
+
     random.seed(0)
-    tree = AvlTreeMap()
+    tree = AVLTreeMap()
     for i in zip(range(20)):
         tree.add(random.randint(0, 1000), 1)
         print(tree)
         print()
+        if not tree.invariant_check():
+            raise ValueError("invariant check failed")
 
     while tree:
         tree.delete_min()
         print(tree)
-        print(end='\n'*2)
+        if not tree.invariant_check():
+            raise ValueError("invariant check failed")
+        print(end='\n' * 2)
 
     # root = tree.tree
     # root = delete_min(root)
