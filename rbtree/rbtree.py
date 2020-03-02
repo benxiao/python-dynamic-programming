@@ -1,9 +1,9 @@
 from enum import Enum
-
+from colorama import Fore
 
 class RBTreeNodeColor:
-    Red=0
-    Black=1
+    Red = 0
+    Black = 1
 
 
 def rb_color(tree):
@@ -19,6 +19,45 @@ class RBTreeNode:
         self.color = color or RBTreeNodeColor.Red
         self.left = left
         self.right = right
+
+    def __str__(self):
+        if self is None:
+            return '<empty tree>'
+
+        def recurse(node):
+            if node is None:
+                return [], 0, 0
+
+            color = "$-" if node.color is RBTreeNodeColor.Black else "$+"
+            label = f"{color}{node.key}$$"
+
+            left_lines, left_pos, left_width = recurse(node.left)
+            right_lines, right_pos, right_width = recurse(node.right)
+            middle = max(right_pos + left_width - left_pos + 1, len(label), 2)
+            pos = left_pos + middle // 2
+            width = left_pos + middle + right_width - right_pos
+            while len(left_lines) < len(right_lines):
+                left_lines.append(' ' * left_width)
+            while len(right_lines) < len(left_lines):
+                right_lines.append(' ' * right_width)
+            label = label.center(middle, '.')
+            if label[0] == '.':
+                label = ' ' + label[1:]
+            if label[-1] == '.':
+                label = label[:-1] + ' '
+            lines = [' ' * left_pos + label + ' ' * (right_width - right_pos),
+                     ' ' * left_pos + '/' + ' ' * (middle - 2) +
+                     '\\' + ' ' * (right_width - right_pos)] + \
+                    [left_line + ' ' * (width - left_width - right_width) +
+                     right_line
+                     for left_line, right_line in zip(left_lines, right_lines)]
+            return lines, pos, width
+
+        ascii_art = '\n'.join(recurse(self)[0])
+        ascii_art = ascii_art.replace("$+", "  "+Fore.RED)
+        ascii_art = ascii_art.replace("$-", "  "+Fore.BLUE)
+        ascii_art = ascii_art.replace("$$", "  "+Fore.RESET)
+        return ascii_art
 
 
 def rb_invariants_check(tree):
@@ -67,13 +106,9 @@ def red_parent_should_not_have_red_child(tree):
             ((rb_color(tree.left) is RBTreeNodeColor.Red) or (rb_color(tree.right) is RBTreeNodeColor.Red)):
         return False
 
-    return red_parent_should_not_have_red_child(tree.left) and \
-           red_parent_should_not_have_red_child(tree.right)
-
-
-
-
+    return red_parent_should_not_have_red_child(tree.left) and red_parent_should_not_have_red_child(tree.right)
 
 
 if __name__ == '__main__':
-    pass
+    root = RBTreeNode(3, 3, color=RBTreeNodeColor.Black, left=RBTreeNode(1, 1), right=RBTreeNode(5,5))
+    print(root)
