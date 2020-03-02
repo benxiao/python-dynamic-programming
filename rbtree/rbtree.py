@@ -1,5 +1,6 @@
 from enum import Enum
 from colorama import Fore
+import re
 
 class RBTreeNodeColor:
     Red = 0
@@ -28,8 +29,7 @@ class RBTreeNode:
             if node is None:
                 return [], 0, 0
 
-            color = "$-" if node.color is RBTreeNodeColor.Black else "$+"
-            label = f"{color}{node.key}$$"
+            label = f"({node.color}:{node.key})"
 
             left_lines, left_pos, left_width = recurse(node.left)
             right_lines, right_pos, right_width = recurse(node.right)
@@ -54,9 +54,8 @@ class RBTreeNode:
             return lines, pos, width
 
         ascii_art = '\n'.join(recurse(self)[0])
-        ascii_art = ascii_art.replace("$+", "  "+Fore.RED)
-        ascii_art = ascii_art.replace("$-", "  "+Fore.BLUE)
-        ascii_art = ascii_art.replace("$$", "  "+Fore.RESET)
+        ascii_art = re.sub(r"(\(0:.*\))", rf"{Fore.RED}\1{Fore.RESET}", ascii_art)
+        ascii_art = re.sub(r"(\(1:.*\))", rf"{Fore.GREEN}\1{Fore.RESET}", ascii_art)
         return ascii_art
 
 
@@ -110,5 +109,7 @@ def red_parent_should_not_have_red_child(tree):
 
 
 if __name__ == '__main__':
-    root = RBTreeNode(3, 3, color=RBTreeNodeColor.Black, left=RBTreeNode(1, 1), right=RBTreeNode(5,5))
+    root = RBTreeNode(3, 3, color=RBTreeNodeColor.Black,
+                      left=RBTreeNode(1, 1),
+                      right=RBTreeNode(5,5))
     print(root)
