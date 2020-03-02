@@ -2,6 +2,7 @@ from enum import Enum
 from colorama import Fore
 import re
 
+
 class RBTreeNodeColor:
     Red = 0
     Black = 1
@@ -11,6 +12,54 @@ def rb_color(tree):
     if tree is None:
         return RBTreeNodeColor.Black
     return tree.color
+
+
+def rb_insert(tree, key, val):
+    new_node = RBTreeNode(key, val)
+    if tree is None:
+        return new_node
+
+    if key < tree.key:
+        tree.left = rb_insert(tree.left, key, val)
+    else:
+        tree.right = rb_insert(tree.right, key, val)
+
+    return tree
+
+
+def rb_rotate_right(y):
+    x = y.left
+    t1 = x.left
+    t2 = x.right
+    t3 = y.right
+
+    x.left = t1
+    x.right = y
+    y.left = t2
+    y.right = t3
+
+    y.height = height(y)
+    x.height = height(x)
+    return x
+
+
+def rb_rotate_left(x):
+    y = x.right
+    t1 = x.left
+    t2 = y.left
+    t3 = y.right
+
+    y.left = x
+    y.right = t3
+    x.left = t1
+    x.right = t2
+
+    x.height = height(x)
+    y.height = height(y)
+
+    return y
+
+
 
 
 class RBTreeNode:
@@ -109,7 +158,11 @@ def red_parent_should_not_have_red_child(tree):
 
 
 if __name__ == '__main__':
-    root = RBTreeNode(3, 3, color=RBTreeNodeColor.Black,
-                      left=RBTreeNode(1, 1),
-                      right=RBTreeNode(5,5))
+    root = None
+    import random
+    for i in range(20):
+        root = rb_insert(root, i, i)
+
     print(root)
+
+
