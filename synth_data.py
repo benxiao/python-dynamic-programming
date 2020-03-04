@@ -5,6 +5,7 @@ import numpy as np
 from numpy import vectorize
 from datetime import date, timedelta
 import time
+from typing import *
 
 faker.generator.random.seed(42)
 
@@ -38,7 +39,7 @@ first_names = np.array([faker_object.first_name_male() if g == 'm' else faker_ob
 print(f"{first_names.shape=}")
 
 
-def generate_sibling_ids():
+def generate_sibling_ids() -> List[int]:
     result = []
     x = 0
     for i, group_count in enumerate(num_sibling_groups, start=1):
@@ -56,7 +57,7 @@ def generate_sibling_ids():
 sibling_ids = generate_sibling_ids()
 
 
-def generate_last_names(sibling_ids):
+def generate_last_names(sibling_ids: List[int]) -> List[str]:
     result = []
     prev = None
     for i in sibling_ids:
@@ -85,7 +86,7 @@ print(f"{birth_dates.shape=}")
 
 
 @vectorize
-def email_gen(first_name, middle_name, last_name, birth_date):
+def email_gen(first_name, middle_name, last_name, birth_date) -> str:
     domain = random.choice(EMAIL_DOMAINS)
 
     # full name
@@ -121,16 +122,16 @@ children = DataFrame({
 print(children.head(30).to_markdown(), end='\n'*4)
 
 
-def mother_birth_date_gen(child_birth_date: date):
+def mother_birth_date_gen(child_birth_date: date) -> date:
     return child_birth_date - timedelta(days=random.randint(20 * 365, 40 * 365))
 
 
-def father_birth_date_gen(child_birth_date: date):
+def father_birth_date_gen(child_birth_date: date) -> date:
     return child_birth_date - timedelta(days=random.randint(18 * 365, 50 * 365))
 
 
-def generate_parents(children):
-    parents = children.drop_duplicates(subset=['sibling_id'])
+def generate_parents(children_df: DataFrame) -> DataFrame:
+    parents = children_df.drop_duplicates(subset=['sibling_id'])
     n_pair_parents = len(parents)
     parents = parents.append(parents.copy()).sort_values('id')
     parent_genders = ['m', 'f'] * n_pair_parents
