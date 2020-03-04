@@ -180,19 +180,16 @@ def next_node(tree, val):
 
 
 def apply_avl_rebalance(tree):
+    # always make tree left leaning
+    if height(tree.left) < height(tree.right):
+        tree = rotate_left(tree)
+
     if height(tree.left) > height(tree.right) + 1:
         if height(tree.left.left) >= height(tree.left.right):
             tree = rotate_right(tree)
         else:
             tree.left = rotate_left(tree.left)
             tree = rotate_right(tree)
-
-    elif height(tree.left) + 1 < height(tree.right):
-        if height(tree.right.right) >= height(tree.right.left):
-            tree = rotate_left(tree)
-        else:
-            tree.right = rotate_right(tree.right)
-            tree = rotate_left(tree)
     return tree
 
 
