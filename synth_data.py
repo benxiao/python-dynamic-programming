@@ -8,10 +8,10 @@ import time
 from typing import *
 
 faker.generator.random.seed(42)
+LOCALES = ['en_AU', 'en_CA', 'en_NZ', 'en_US', 'en_GB']
+faker_object = faker.Faker(LOCALES)
 
-faker_object = faker.Faker()
-
-TOTAL_NUMBER_OF_CHILDREN = 1000
+TOTAL_NUMBER_OF_CHILDREN = 1000_000
 MALE_PERCENTAGE = 0.5
 CHILD_AGE_LOW = 5
 CHILD_AGE_HIGH = 18
