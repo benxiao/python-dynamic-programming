@@ -92,7 +92,7 @@ def delete_min(tree):
         return tree.right
     tree.left = delete_min(tree.left)
     tree.height = height(tree)
-    return apply_avl_rebalance(tree)
+    return avl_self_rebalancing(tree)
 
 
 def delete_max(tree):
@@ -100,7 +100,7 @@ def delete_max(tree):
         return tree.left
     tree.right = delete_max(tree.right)
     tree.height = height(tree)
-    return apply_avl_rebalance(tree)
+    return avl_self_rebalancing(tree)
 
 
 def min_node(tree):
@@ -179,20 +179,18 @@ def next_node(tree, val):
     return succ
 
 
-def apply_avl_rebalance(tree):
+def avl_self_rebalancing(tree):
+    # always make tree left leaning
+    if height(tree.left) < height(tree.right):
+        tree = rotate_left(tree)
+
     if height(tree.left) > height(tree.right) + 1:
-        if height(tree.left.left) > height(tree.left.right):
+        # change from (>) => (>=)
+        if height(tree.left.left) >= height(tree.left.right):
             tree = rotate_right(tree)
         else:
             tree.left = rotate_left(tree.left)
             tree = rotate_right(tree)
-
-    elif height(tree.left) + 1 < height(tree.right):
-        if height(tree.right.right) > height(tree.right.left):
-            tree = rotate_left(tree)
-        else:
-            tree.right = rotate_right(tree.right)
-            tree = rotate_left(tree)
     return tree
 
 
@@ -207,7 +205,7 @@ def insert(tree: TreeNode, key, val):
         tree.right = insert(tree.right, key, val)
         tree.height = height(tree)
 
-    return apply_avl_rebalance(tree)
+    return avl_self_rebalancing(tree)
 
 
 def tree_remove(tree: TreeNode, val: Any):
@@ -324,7 +322,9 @@ class AVLTreeMap:
         return tree_equal(self.tree, other.tree)
 
     def delete_min(self):
+        minimum = min_node(self.tree)
         self.tree = delete_min(self.tree)
+        return minimum if not minimum else minimum.key
 
     def invariant_check(self):
         heights_ok = check_heights(self.tree)
@@ -337,7 +337,7 @@ if __name__ == '__main__':
 
     random.seed(0)
     tree = AVLTreeMap()
-    for i in zip(range(20)):
+    for i in zip(range(30)):
         tree.add(random.randint(0, 1000), 1)
         print(tree)
         print()
@@ -345,7 +345,7 @@ if __name__ == '__main__':
             raise ValueError("invariant check failed")
 
     while tree:
-        tree.delete_min()
+        print(tree.delete_min())
         print(tree)
         if not tree.invariant_check():
             raise ValueError("invariant check failed")
