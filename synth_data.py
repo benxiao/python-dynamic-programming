@@ -7,6 +7,7 @@ from datetime import date, timedelta
 import time
 from typing import *
 
+
 faker.generator.random.seed(42)
 LOCALES = ['en_AU', 'en_CA', 'en_NZ', 'en_US', 'en_GB']
 faker_object = faker.Faker(LOCALES)
@@ -88,11 +89,12 @@ print(f"{birth_dates.shape=}")
 @vectorize
 def email_gen(first_name, middle_name, last_name, birth_date) -> str:
     domain = random.choice(EMAIL_DOMAINS)
+    seps = "_."
+    sep = random.choice(seps)
 
     # full name
-
     def t0():
-        return f"{first_name}.{last_name}@{domain}.com"
+        return f"{first_name}{sep}{last_name}@{domain}.com"
 
     # initials and birth year
     def t1():
@@ -101,8 +103,12 @@ def email_gen(first_name, middle_name, last_name, birth_date) -> str:
     def t2():
         return f"{first_name}{birth_date.month}{birth_date.day}@{domain}.com"
 
-    t = random.choice([t0, t1, t2])
-    return t()
+    # complete first_name, last initial birth_date
+    def t3():
+        return f"{first_name}{sep}{last_name[0]}{birth_date.month}{birth_date.day}@{domain}.com"
+
+    t = random.choice([t0, t1, t2, t3])
+    return t().lower()
 
 
 emails = email_gen(first_names, middle_names, last_names, birth_dates)
