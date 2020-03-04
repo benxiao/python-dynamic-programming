@@ -92,7 +92,7 @@ def delete_min(tree):
         return tree.right
     tree.left = delete_min(tree.left)
     tree.height = height(tree)
-    return apply_avl_rebalance(tree)
+    return avl_self_rebalancing(tree)
 
 
 def delete_max(tree):
@@ -100,7 +100,7 @@ def delete_max(tree):
         return tree.left
     tree.right = delete_max(tree.right)
     tree.height = height(tree)
-    return apply_avl_rebalance(tree)
+    return avl_self_rebalancing(tree)
 
 
 def min_node(tree):
@@ -179,12 +179,13 @@ def next_node(tree, val):
     return succ
 
 
-def apply_avl_rebalance(tree):
+def avl_self_rebalancing(tree):
     # always make tree left leaning
     if height(tree.left) < height(tree.right):
         tree = rotate_left(tree)
 
     if height(tree.left) > height(tree.right) + 1:
+        # change from (>) => (>=)
         if height(tree.left.left) >= height(tree.left.right):
             tree = rotate_right(tree)
         else:
@@ -204,7 +205,7 @@ def insert(tree: TreeNode, key, val):
         tree.right = insert(tree.right, key, val)
         tree.height = height(tree)
 
-    return apply_avl_rebalance(tree)
+    return avl_self_rebalancing(tree)
 
 
 def tree_remove(tree: TreeNode, val: Any):
