@@ -100,6 +100,7 @@ def email_gen(first_name, middle_name, last_name, birth_date) -> str:
     def t1():
         return f"{first_name[0]}{middle_name[0]}{last_name[0]}{birth_date.year}@{domain}.com"
 
+    # complete first_name + birth_date
     def t2():
         return f"{first_name}{birth_date.month}{birth_date.day}@{domain}.com"
 
