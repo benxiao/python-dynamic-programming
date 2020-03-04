@@ -134,7 +134,7 @@ def father_birth_date_gen(child_birth_date: date) -> date:
 def generate_parents(children_df: DataFrame) -> DataFrame:
     parents = children_df.drop_duplicates(subset=['sibling_id'])
     n_pair_parents = len(parents)
-    parents = parents.append(parents.copy()).sort_values('id')
+    parents = parents.append(parents.copy()).sort_values('sibling_id')
     parent_genders = ['m', 'f'] * n_pair_parents
 
     parents.loc[:, 'gender'] = parent_genders
