@@ -11,7 +11,7 @@ faker.generator.random.seed(42)
 LOCALES = ['en_AU', 'en_CA', 'en_NZ', 'en_US', 'en_GB']
 faker_object = faker.Faker(LOCALES)
 
-TOTAL_NUMBER_OF_CHILDREN = 1000_000
+TOTAL_NUMBER_OF_CHILDREN = 1000
 MALE_PERCENTAGE = 0.5
 CHILD_AGE_LOW = 5
 CHILD_AGE_HIGH = 18
@@ -116,7 +116,8 @@ children = DataFrame({
     "last_name": last_names,
     "birth_date": birth_dates,
     "email_address": emails,
-    "gender": genders
+    "gender": genders,
+    "is_child": [True] * TOTAL_NUMBER_OF_CHILDREN
 })
 
 print(children.head(30).to_markdown(), end='\n'*4)
@@ -163,8 +164,12 @@ def generate_parents(children_df: DataFrame) -> DataFrame:
         parents.loc[:, 'birth_date']
     )
 
+    parents.loc[:, 'is_child'] = [False] * len(parents)
+    parents.loc[:, 'id'] = np.arange(len(parents)) + len(children_df)
     print(parents.head(30).to_markdown())
 
 
-generate_parents(children)
+parents = generate_parents(children)
+
+
 print(f"elapsed time: {time.time() - start:.2f}s")
