@@ -21,8 +21,12 @@ def rb_insert(tree, key, val):
 
     if key < tree.key:
         tree.left = rb_insert(tree.left, key, val)
-    else:
+
+    elif key > tree.key:
         tree.right = rb_insert(tree.right, key, val)
+
+    else:
+        tree.val = val
 
     return tree
 
@@ -38,8 +42,6 @@ def rb_rotate_right(y):
     y.left = t2
     y.right = t3
 
-    y.height = height(y)
-    x.height = height(x)
     return x
 
 
@@ -54,12 +56,7 @@ def rb_rotate_left(x):
     x.left = t1
     x.right = t2
 
-    x.height = height(x)
-    y.height = height(y)
-
     return y
-
-
 
 
 class RBTreeNode:
