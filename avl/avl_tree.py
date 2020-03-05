@@ -46,7 +46,7 @@ class TreeNode:
         return '\n'.join(recurse(self)[0])
 
 
-def rotate_right(y):
+def rotate_right(y: TreeNode) -> TreeNode:
     x = y.left
     t1 = x.left
     t2 = x.right
@@ -62,7 +62,7 @@ def rotate_right(y):
     return x
 
 
-def rotate_left(x):
+def rotate_left(x: TreeNode) -> TreeNode:
     y = x.right
     t1 = x.left
     t2 = y.left
@@ -79,7 +79,7 @@ def rotate_left(x):
     return y
 
 
-def height(tree):
+def height(tree: TreeNode) -> int:
     if tree is None:
         return 0
     left = tree.left.height if tree.left else 0
@@ -87,7 +87,7 @@ def height(tree):
     return max(left, right) + 1
 
 
-def delete_min(tree):
+def delete_min(tree: TreeNode) -> TreeNode:
     if tree.left is None:
         return tree.right
     tree.left = delete_min(tree.left)
@@ -95,7 +95,7 @@ def delete_min(tree):
     return avl_self_balance(tree)
 
 
-def delete_max(tree):
+def delete_max(tree: TreeNode) -> TreeNode:
     if tree.right is None:
         return tree.left
     tree.right = delete_max(tree.right)
@@ -103,7 +103,7 @@ def delete_max(tree):
     return avl_self_balance(tree)
 
 
-def min_node(tree):
+def min_node(tree: TreeNode) -> TreeNode:
     cur = tree
     if cur is None:
         return cur
@@ -112,7 +112,7 @@ def min_node(tree):
     return cur
 
 
-def max_node(tree):
+def max_node(tree: TreeNode) -> TreeNode:
     cur = tree
     if cur is None:
         return cur
@@ -121,7 +121,7 @@ def max_node(tree):
     return cur
 
 
-def get(tree, val):
+def get(tree: TreeNode, val: Any) -> TreeNode:
     if tree is None:
         raise KeyError()
 
@@ -180,7 +180,7 @@ def next_node(tree, val):
 
 
 def avl_self_balance(tree):
-    # always make tree left leaning
+    # always make tree left leaning (simpify the algos)
     if height(tree.left) < height(tree.right):
         tree = rotate_left(tree)
 
@@ -209,6 +209,7 @@ def insert(tree: TreeNode, key, val):
 
 
 def tree_remove(tree: TreeNode, val: Any):
+    # base case
     if tree is None:
         return None
     if val < tree.key:
@@ -221,7 +222,23 @@ def tree_remove(tree: TreeNode, val: Any):
         if tree.right is None:
             return tree.left
 
-    # toDo
+        replacement = min_node(tree.right)
+        replacement.right = delete_min(tree.right)
+        replacement.left = tree.left
+        return avl_self_balance(replacement)
+
+
+def tree_copy(tree):
+    if tree is None:
+        return None
+
+    new_node = TreeNode(
+        tree.key, tree.val,
+        left=tree_copy(tree.left),
+        right=tree_copy(tree.right)
+    )
+    new_node.height = tree.height
+    return new_node
 
 
 def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
@@ -279,6 +296,9 @@ class AVLTreeMap:
         for k, v in iterable.items():
             self.tree = insert(self.tree, k, v)
 
+    def copy(self):
+        return
+
     def __bool__(self):
         return self.tree is not None
 
@@ -335,14 +355,17 @@ if __name__ == '__main__':
     root = None
     import random
 
-    random.seed(0)
+    random.seed(42)
     tree = AVLTreeMap()
-    for i in zip(range(30)):
+
+    for i in zip(range(100)):
         tree.add(random.randint(0, 1000), 1)
         print(tree)
         print()
         if not tree.invariant_check():
             raise ValueError("invariant check failed")
+
+    tree_copyied = tree.copy()
 
     while tree:
         print(tree.delete_min())
