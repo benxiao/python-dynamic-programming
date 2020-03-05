@@ -348,7 +348,7 @@ class AVLTreeMap:
         self.tree = delete_min(self.tree)
         return minimum if not minimum else minimum.key
 
-    def invariant_check(self):
+    def is_avl(self):
         heights_ok = check_heights(self.tree)
         return heights_ok and check_avl_invariants(self.tree)
 
@@ -364,7 +364,7 @@ if __name__ == '__main__':
         tree.add(random.randint(0, 1000), 1)
         print(tree)
         print()
-        if not tree.invariant_check():
+        if not tree.is_avl():
             raise ValueError("invariant check failed")
 
     tree_copied = tree.copy()
@@ -372,7 +372,7 @@ if __name__ == '__main__':
     while tree:
         print(tree.delete_min())
         print(tree)
-        if not tree.invariant_check():
+        if not tree.is_avl():
             raise ValueError("invariant check failed")
         print(end='\n' * 2)
 
@@ -380,7 +380,7 @@ if __name__ == '__main__':
     while tree_copied:
         print(tree_copied.delete_min())
         print(tree_copied)
-        if not tree_copied.invariant_check():
+        if not tree_copied.is_avl():
             raise ValueError("invariant check failed")
         print(end='\n' * 2)
 
