@@ -213,19 +213,20 @@ def tree_remove(tree: TreeNode, val: Any):
     if tree is None:
         return None
     if val < tree.key:
-        tree.left = tree_remove(tree, val)
+        tree.left = tree_remove(tree.left, val)
     elif val > tree.key:
-        tree.right = tree_remove(tree, val)
+        tree.right = tree_remove(tree.right, val)
     else:
         if tree.left is None:
             return tree.right
         if tree.right is None:
             return tree.left
-
         replacement = min_node(tree.right)
         replacement.right = delete_min(tree.right)
         replacement.left = tree.left
-        return avl_self_balance(replacement)
+        tree = replacement
+    tree.height = height(tree)
+    return avl_self_balance(tree)
 
 
 def tree_copy(tree):
@@ -350,24 +351,33 @@ class AVLTreeMap:
 
     def is_avl(self):
         heights_ok = check_heights(self.tree)
+        if not heights_ok:
+            print("failed node height check")
         return heights_ok and check_avl_invariants(self.tree)
+
+    def delete_key(self, key):
+        self.tree = tree_remove(self.tree, key)
+
 
 
 if __name__ == '__main__':
     root = None
+
+    seq = list(range(30))
+
     import random
-
     random.seed(42)
+    random.shuffle(seq)
     tree = AVLTreeMap()
-
-    for i in zip(range(100)):
-        tree.add(random.randint(0, 1000), 1)
+    for key in seq:
+        tree.add(key, key)
         print(tree)
         print()
         if not tree.is_avl():
             raise ValueError("invariant check failed")
 
     tree_copied = tree.copy()
+    tree_copied_2 = tree.copy()
 
     while tree:
         print(tree.delete_min())
@@ -377,12 +387,21 @@ if __name__ == '__main__':
         print(end='\n' * 2)
 
 
-    while tree_copied:
-        print(tree_copied.delete_min())
-        print(tree_copied)
-        if not tree_copied.is_avl():
+    while tree_copied_2:
+        print(tree_copied_2.delete_min())
+        print(tree_copied_2)
+        if not tree_copied_2.is_avl():
             raise ValueError("invariant check failed")
         print(end='\n' * 2)
+
+    for k in seq:
+        if k == 6:
+            print(f"delete {k=}")
+            tree_copied.delete_key(k)
+            print(tree_copied)
+            if not tree_copied.is_avl():
+                raise ValueError("invariant check failed")
+
 
 
 
