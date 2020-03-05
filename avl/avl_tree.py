@@ -121,7 +121,7 @@ def max_node(tree: TreeNode) -> TreeNode:
     return cur
 
 
-def get(tree: TreeNode, val: Any) -> TreeNode:
+def tree_get(tree: TreeNode, val: Any) -> TreeNode:
     if tree is None:
         raise KeyError()
 
@@ -139,7 +139,7 @@ def get(tree: TreeNode, val: Any) -> TreeNode:
 
 
 def prev_node(tree, val):
-    target = get(tree, val)
+    target = tree_get(tree, val)
     if target.left:
         return max_node(target.left)
     prev = None
@@ -158,7 +158,7 @@ def prev_node(tree, val):
 
 
 def next_node(tree, val):
-    target = get(tree, val)
+    target = tree_get(tree, val)
     if target.right:
         return min_node(target.right)
 
@@ -308,6 +308,10 @@ class AVLTreeMap:
     def add(self, key, val):
         self.tree = insert(self.tree, key, val)
 
+    def get(self, key):
+        node = tree_get(self.tree, key)
+        return node.val
+
     def __str__(self):
         if self.tree is None:
             return "<empty>"
@@ -386,7 +390,6 @@ if __name__ == '__main__':
             raise ValueError("invariant check failed")
         print(end='\n' * 2)
 
-
     while tree_copied_2:
         print(tree_copied_2.delete_min())
         print(tree_copied_2)
@@ -395,12 +398,11 @@ if __name__ == '__main__':
         print(end='\n' * 2)
 
     for k in seq:
-        if k == 6:
-            print(f"delete {k=}")
-            tree_copied.delete_key(k)
-            print(tree_copied)
-            if not tree_copied.is_avl():
-                raise ValueError("invariant check failed")
+        print(f"delete {k=}")
+        tree_copied.delete_key(k)
+        print(tree_copied)
+        if not tree_copied.is_avl():
+            raise ValueError("invariant check failed")
 
 
 
