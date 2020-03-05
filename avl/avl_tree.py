@@ -297,7 +297,9 @@ class AVLTreeMap:
             self.tree = insert(self.tree, k, v)
 
     def copy(self):
-        return
+        new_tree_map = AVLTreeMap()
+        new_tree_map.tree = tree_copy(self.tree)
+        return new_tree_map
 
     def __bool__(self):
         return self.tree is not None
@@ -365,7 +367,7 @@ if __name__ == '__main__':
         if not tree.invariant_check():
             raise ValueError("invariant check failed")
 
-    tree_copyied = tree.copy()
+    tree_copied = tree.copy()
 
     while tree:
         print(tree.delete_min())
@@ -373,6 +375,16 @@ if __name__ == '__main__':
         if not tree.invariant_check():
             raise ValueError("invariant check failed")
         print(end='\n' * 2)
+
+
+    while tree_copied:
+        print(tree_copied.delete_min())
+        print(tree_copied)
+        if not tree_copied.invariant_check():
+            raise ValueError("invariant check failed")
+        print(end='\n' * 2)
+
+
 
     # root = tree.tree
     # root = delete_min(root)
