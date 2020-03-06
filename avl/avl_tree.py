@@ -274,6 +274,20 @@ def tree_count(tree):
     return 1 + tree_count(tree.left) + tree_count(tree.right)
 
 
+def tree_rank(tree, key):
+    if tree is None:
+        return 0
+
+    if key < tree.key:
+        return tree_rank(tree.left, key)
+
+    elif key > tree.key:
+        return 1 + tree_count(tree.left) + tree_rank(tree.right, key)
+
+    else:
+        return tree_count(tree.left)
+
+
 def check_avl_invariants(tree):
     if tree is None:
         return True
@@ -314,6 +328,9 @@ class AVLTreeMap:
     def get(self, key):
         node = tree_get(self.tree, key)
         return node.val
+
+    def rank(self, key):
+        return tree_rank(self.tree, key)
 
     def clear(self):
         self.tree = None
@@ -367,71 +384,3 @@ class AVLTreeMap:
 
     def delete_key(self, key):
         self.tree = tree_remove(self.tree, key)
-
-
-
-if __name__ == '__main__':
-    root = None
-
-    seq = list(range(30))
-
-    import random
-    random.seed(42)
-    random.shuffle(seq)
-    tree = AVLTreeMap()
-    for key in seq:
-        tree.add(key, key)
-        print(tree)
-        print()
-        if not tree.is_avl():
-            raise ValueError("invariant check failed")
-
-    tree_copied = tree.copy()
-    tree_copied_2 = tree.copy()
-
-    while tree:
-        print(tree.delete_min())
-        print(tree)
-        if not tree.is_avl():
-            raise ValueError("invariant check failed")
-        print(end='\n' * 2)
-
-    while tree_copied_2:
-        print(tree_copied_2.delete_min())
-        print(tree_copied_2)
-        if not tree_copied_2.is_avl():
-            raise ValueError("invariant check failed")
-        print(end='\n' * 2)
-
-    for k in seq:
-        print(f"delete {k=}")
-        tree_copied.delete_key(k)
-        print(tree_copied)
-        if not tree_copied.is_avl():
-            raise ValueError("invariant check failed")
-
-
-
-
-    # root = tree.tree
-    # root = delete_min(root)
-    # print(root)
-    # print()
-    # root = delete_min(root)
-    # print(root)
-    # print()
-
-    # key = tree.min()
-    # while 1:
-    #     print(key)
-    #     key = tree.next_large(key)
-    #     if key is None:
-    #         break
-    #
-    # key = tree.max()
-    # while 1:
-    #     print(key)
-    #     key = tree.prev(key)
-    #     if key is None:
-    #         break
-    # print(len(tree))

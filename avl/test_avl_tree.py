@@ -5,15 +5,20 @@ from avl.avl_tree import *
 
 random.seed(0)
 
+N = 2000
+
 
 class AVLTreeMapTests(TestCase):
     def setUp(self):
-        self.keys = list(range(1000))
+        self.keys = list(range(N))
         random.shuffle(self.keys)
         self.tree = AVLTreeMap()
         for k in self.keys:
             self.tree.add(k, k)
-        #print(self.tree)
+
+        if N <= 30:
+            print(end='\n'*3)
+            print(self.tree)
 
     def tearDown(self):
         self.keys = None
@@ -56,11 +61,18 @@ class AVLTreeMapTests(TestCase):
     def testDeleteKey(self):
         tree = self.tree.copy()
         for k in self.keys:
-            self.assertNotEqual(tree.get(k), None)
+            self.assertEqual(tree.get(k), k)
             tree.delete_key(k)
             self.assertTrue(tree.is_avl())
             with self.assertRaises(KeyError):
                 tree.get(k)
+
+
+    def testTreeRank(self):
+        tree = self.tree.copy()
+        sorted_keys = sorted(self.keys)
+        for i, k in enumerate(sorted_keys):
+            self.assertEqual(tree.rank(k), i)
 
 
 
