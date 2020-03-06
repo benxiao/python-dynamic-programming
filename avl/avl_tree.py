@@ -2,6 +2,9 @@ from typing import *
 
 
 class TreeNode:
+
+    __slots__ = ['key', 'val', 'left', 'right', 'height']
+
     def __init__(self, key, val, left=None, right=None):
         self.key = key
         self.val = val

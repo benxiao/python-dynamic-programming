@@ -8,13 +8,12 @@ random.seed(0)
 
 class AVLTreeMapTests(TestCase):
     def setUp(self):
-        self.keys = list(range(30))
+        self.keys = list(range(1000))
         random.shuffle(self.keys)
         self.tree = AVLTreeMap()
         for k in self.keys:
             self.tree.add(k, k)
-        print(end='\n' * 4)
-        print(self.tree)
+        #print(self.tree)
 
     def testTreeMapAdd(self):
         tree = AVLTreeMap()
@@ -42,6 +41,20 @@ class AVLTreeMapTests(TestCase):
         for k in sorted_keys[1:]:
             self.assertEqual(self.tree.next_large(prev), k)
             prev = k
+
+    def testDeleteMin(self):
+        tree = self.tree.copy()
+        sorted_keys = sorted(self.keys, reverse=True)
+        while tree:
+            self.assertEqual(tree.delete_min(), sorted_keys.pop())
+            self.assertTrue(tree.is_avl())
+
+
+    def testDeleteKey(self):
+        pass
+
+
+
 
 
 
