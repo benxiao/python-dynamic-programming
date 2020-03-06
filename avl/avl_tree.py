@@ -265,10 +265,10 @@ def btree_complete(tree, idx, count):
                and btree_complete(tree.right, 2 * idx + 1, count)
 
 
-def btree_count(tree):
+def tree_count(tree):
     if tree is None:
         return 0
-    return 1 + btree_count(tree.left) + btree_count(tree.right)
+    return 1 + tree_count(tree.left) + tree_count(tree.right)
 
 
 def check_avl_invariants(tree):
@@ -340,7 +340,7 @@ class AVLTreeMap:
         return n.val
 
     def __len__(self):
-        return btree_count(self.tree)
+        return tree_count(self.tree)
 
     def __eq__(self, other):
         if not isinstance(other, AVLTreeMap):

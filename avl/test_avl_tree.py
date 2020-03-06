@@ -25,4 +25,26 @@ class AVLTreeMapTests(TestCase):
         for k in self.keys:
             self.assertEqual(tree.get(k), k)
 
+    def testTreeNodeCount(self):
+        self.assertEqual(len(self.tree), len(self.keys))
+
+    def testTreeMin(self):
+        self.assertEqual(self.tree.min(), min(self.keys))
+
+    def testTestMax(self):
+        self.assertEqual(self.tree.max(), max(self.keys))
+
+    def testNextLarge(self):
+        minimum = self.tree.min()
+        sorted_keys = sorted(self.keys)
+        self.assertEqual(sorted_keys[0], minimum)
+        prev = minimum
+        for k in sorted_keys[1:]:
+            self.assertEqual(self.tree.next_large(prev), k)
+            prev = k
+
+
+
+
+
 
