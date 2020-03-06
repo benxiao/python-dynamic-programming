@@ -49,11 +49,14 @@ class AVLTreeMapTests(TestCase):
             self.assertEqual(tree.delete_min(), sorted_keys.pop())
             self.assertTrue(tree.is_avl())
 
-
     def testDeleteKey(self):
-        pass
-
-
+        tree = self.tree.copy()
+        for k in self.keys:
+            self.assertNotEqual(tree.get(k), None)
+            tree.delete_key(k)
+            self.assertTrue(tree.is_avl())
+            with self.assertRaises(KeyError):
+                tree.get(k)
 
 
 
