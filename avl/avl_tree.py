@@ -2,6 +2,9 @@ from typing import *
 
 
 class TreeNode:
+
+    __slots__ = ['key', 'val', 'left', 'right', 'height']
+
     def __init__(self, key, val, left=None, right=None):
         self.key = key
         self.val = val
@@ -46,7 +49,7 @@ class TreeNode:
         return '\n'.join(recurse(self)[0])
 
 
-def rotate_right(y):
+def rotate_right(y: TreeNode) -> TreeNode:
     x = y.left
     t1 = x.left
     t2 = x.right
@@ -62,7 +65,7 @@ def rotate_right(y):
     return x
 
 
-def rotate_left(x):
+def rotate_left(x: TreeNode) -> TreeNode:
     y = x.right
     t1 = x.left
     t2 = y.left
@@ -79,7 +82,7 @@ def rotate_left(x):
     return y
 
 
-def height(tree):
+def height(tree: TreeNode) -> int:
     if tree is None:
         return 0
     left = tree.left.height if tree.left else 0
@@ -87,7 +90,7 @@ def height(tree):
     return max(left, right) + 1
 
 
-def delete_min(tree):
+def delete_min(tree: TreeNode) -> TreeNode:
     if tree.left is None:
         return tree.right
     tree.left = delete_min(tree.left)
@@ -95,7 +98,7 @@ def delete_min(tree):
     return avl_self_balance(tree)
 
 
-def delete_max(tree):
+def delete_max(tree: TreeNode) -> TreeNode:
     if tree.right is None:
         return tree.left
     tree.right = delete_max(tree.right)
@@ -103,7 +106,7 @@ def delete_max(tree):
     return avl_self_balance(tree)
 
 
-def min_node(tree):
+def min_node(tree: TreeNode) -> TreeNode:
     cur = tree
     if cur is None:
         return cur
@@ -112,7 +115,7 @@ def min_node(tree):
     return cur
 
 
-def max_node(tree):
+def max_node(tree: TreeNode) -> TreeNode:
     cur = tree
     if cur is None:
         return cur
@@ -121,7 +124,7 @@ def max_node(tree):
     return cur
 
 
-def get(tree, val):
+def tree_get(tree: TreeNode, val: Any) -> TreeNode:
     if tree is None:
         raise KeyError()
 
@@ -139,7 +142,7 @@ def get(tree, val):
 
 
 def prev_node(tree, val):
-    target = get(tree, val)
+    target = tree_get(tree, val)
     if target.left:
         return max_node(target.left)
     prev = None
@@ -158,7 +161,7 @@ def prev_node(tree, val):
 
 
 def next_node(tree, val):
-    target = get(tree, val)
+    target = tree_get(tree, val)
     if target.right:
         return min_node(target.right)
 
@@ -180,7 +183,7 @@ def next_node(tree, val):
 
 
 def avl_self_balance(tree):
-    # always make tree left leaning
+    # always make tree left leaning (simpify the algos)
     if height(tree.left) < height(tree.right):
         tree = rotate_left(tree)
 
@@ -209,19 +212,37 @@ def insert(tree: TreeNode, key, val):
 
 
 def tree_remove(tree: TreeNode, val: Any):
+    # base case
     if tree is None:
         return None
     if val < tree.key:
-        tree.left = tree_remove(tree, val)
+        tree.left = tree_remove(tree.left, val)
     elif val > tree.key:
-        tree.right = tree_remove(tree, val)
+        tree.right = tree_remove(tree.right, val)
     else:
         if tree.left is None:
             return tree.right
         if tree.right is None:
             return tree.left
+        replacement = min_node(tree.right)
+        replacement.right = delete_min(tree.right)
+        replacement.left = tree.left
+        tree = replacement
+    tree.height = height(tree)
+    return avl_self_balance(tree)
 
-    # toDo
+
+def tree_copy(tree):
+    if tree is None:
+        return None
+
+    new_node = TreeNode(
+        tree.key, tree.val,
+        left=tree_copy(tree.left),
+        right=tree_copy(tree.right)
+    )
+    new_node.height = tree.height
+    return new_node
 
 
 def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
@@ -247,10 +268,10 @@ def btree_complete(tree, idx, count):
                and btree_complete(tree.right, 2 * idx + 1, count)
 
 
-def btree_count(tree):
+def tree_count(tree):
     if tree is None:
         return 0
-    return 1 + btree_count(tree.left) + btree_count(tree.right)
+    return 1 + tree_count(tree.left) + tree_count(tree.right)
 
 
 def check_avl_invariants(tree):
@@ -279,11 +300,20 @@ class AVLTreeMap:
         for k, v in iterable.items():
             self.tree = insert(self.tree, k, v)
 
+    def copy(self):
+        new_tree_map = AVLTreeMap()
+        new_tree_map.tree = tree_copy(self.tree)
+        return new_tree_map
+
     def __bool__(self):
         return self.tree is not None
 
     def add(self, key, val):
         self.tree = insert(self.tree, key, val)
+
+    def get(self, key):
+        node = tree_get(self.tree, key)
+        return node.val
 
     def __str__(self):
         if self.tree is None:
@@ -313,7 +343,7 @@ class AVLTreeMap:
         return n.val
 
     def __len__(self):
-        return btree_count(self.tree)
+        return tree_count(self.tree)
 
     def __eq__(self, other):
         if not isinstance(other, AVLTreeMap):
@@ -326,30 +356,59 @@ class AVLTreeMap:
         self.tree = delete_min(self.tree)
         return minimum if not minimum else minimum.key
 
-    def invariant_check(self):
+    def is_avl(self):
         heights_ok = check_heights(self.tree)
+        if not heights_ok:
+            print("failed node height check")
         return heights_ok and check_avl_invariants(self.tree)
+
+    def delete_key(self, key):
+        self.tree = tree_remove(self.tree, key)
+
 
 
 if __name__ == '__main__':
     root = None
-    import random
 
-    random.seed(0)
+    seq = list(range(30))
+
+    import random
+    random.seed(42)
+    random.shuffle(seq)
     tree = AVLTreeMap()
-    for i in zip(range(30)):
-        tree.add(random.randint(0, 1000), 1)
+    for key in seq:
+        tree.add(key, key)
         print(tree)
         print()
-        if not tree.invariant_check():
+        if not tree.is_avl():
             raise ValueError("invariant check failed")
+
+    tree_copied = tree.copy()
+    tree_copied_2 = tree.copy()
 
     while tree:
         print(tree.delete_min())
         print(tree)
-        if not tree.invariant_check():
+        if not tree.is_avl():
             raise ValueError("invariant check failed")
         print(end='\n' * 2)
+
+    while tree_copied_2:
+        print(tree_copied_2.delete_min())
+        print(tree_copied_2)
+        if not tree_copied_2.is_avl():
+            raise ValueError("invariant check failed")
+        print(end='\n' * 2)
+
+    for k in seq:
+        print(f"delete {k=}")
+        tree_copied.delete_key(k)
+        print(tree_copied)
+        if not tree_copied.is_avl():
+            raise ValueError("invariant check failed")
+
+
+
 
     # root = tree.tree
     # root = delete_min(root)
