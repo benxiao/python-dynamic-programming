@@ -15,6 +15,10 @@ class AVLTreeMapTests(TestCase):
             self.tree.add(k, k)
         #print(self.tree)
 
+    def tearDown(self):
+        self.keys = None
+        self.tree.clear()
+
     def testTreeMapAdd(self):
         tree = AVLTreeMap()
         for k in self.keys:

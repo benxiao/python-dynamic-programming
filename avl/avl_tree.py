@@ -315,6 +315,9 @@ class AVLTreeMap:
         node = tree_get(self.tree, key)
         return node.val
 
+    def clear(self):
+        self.tree = None
+
     def __str__(self):
         if self.tree is None:
             return "<empty>"
