@@ -60,7 +60,7 @@ def avl_rotate_right(y: AVLTreeNode) -> AVLTreeNode:
     y.right = t3
 
     y.height = avl_tree_height(y)
-    x.avl_tree_height = avl_tree_height(x)
+    x.height = avl_tree_height(x)
     return x
 
 
@@ -76,7 +76,7 @@ def avl_rotate_left(x: AVLTreeNode) -> AVLTreeNode:
     x.right = t2
 
     x.height = avl_tree_height(x)
-    y.avl_tree_height = avl_tree_height(y)
+    y.height = avl_tree_height(y)
 
     return y
 
@@ -84,8 +84,8 @@ def avl_rotate_left(x: AVLTreeNode) -> AVLTreeNode:
 def avl_tree_height(tree: AVLTreeNode) -> int:
     if tree is None:
         return 0
-    left = tree.left.avl_tree_height if tree.left else 0
-    right = tree.right.avl_tree_height if tree.right else 0
+    left = tree.left.height if tree.left else 0
+    right = tree.right.height if tree.right else 0
     return max(left, right) + 1
 
 

@@ -8,10 +8,10 @@ class RBTreeNodeColor:
     Black = 1
 
 
-def rb_color(tree):
+def is_red(tree):
     if tree is None:
-        return RBTreeNodeColor.Black
-    return tree.color
+        return False
+    return tree.color is RBTreeNodeColor.Red
 
 
 def rb_insert(tree, key, val):
@@ -41,6 +41,9 @@ def rb_rotate_right(y):
     x.right = y
     y.left = t2
     y.right = t3
+    x.color = y.color
+    y.color = RBTreeNodeColor.Red
+
 
     return x
 
@@ -55,6 +58,9 @@ def rb_rotate_left(x):
     y.right = t3
     x.left = t1
     x.right = t2
+
+    y.color = x.color
+    x.color = RBTreeNodeColor.Red
 
     return y
 

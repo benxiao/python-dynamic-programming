@@ -29,9 +29,11 @@ def array_qsort(lst, low, high):
 
 if __name__ == '__main__':
     import random
-    lst = [random.randint(0, 100) for _ in range(20)]
+    import time
+    start = time.time()
+    lst = [random.randint(0, 10000000) for _ in range(1000000)]
     array_qsort(lst, 0, len(lst))
-    print(lst)
+    print(f'elapsed: {time.time() - start:.2f}s')
 
 
 

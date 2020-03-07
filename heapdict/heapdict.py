@@ -113,7 +113,7 @@ def heappush(_heap, _dict, key, priority, debug=False):
     """
     push a new item on the _heap
     """
-    if _dict.get(key):
+    if _dict.tree_get(key):
         raise ValueError()
 
     _heap.append((priority, key))

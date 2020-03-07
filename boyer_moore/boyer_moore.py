@@ -48,7 +48,7 @@ def search(needle, haystack, preproc):
         # right to left scanning on each alignment
         for (k, m) in zip(reversed(range(needle_length)), reversed(range(i+1))):
             if haystack[m] != needle[k]:
-                skip_value = skip.get(haystack[m])
+                skip_value = skip.tree_get(haystack[m])
                 if skip_value is None:
                     i += needle_length
                 else:
