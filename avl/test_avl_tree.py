@@ -55,7 +55,7 @@ class AVLTreeMapTests(TestCase):
         tree = self.tree.copy()
         sorted_keys = sorted(self.keys, reverse=True)
         while tree:
-            self.assertEqual(tree.delete_min(), sorted_keys.pop())
+            self.assertEqual(tree.avl_delete_min(), sorted_keys.pop())
             self.assertTrue(tree.is_avl())
 
     def testDeleteKey(self):

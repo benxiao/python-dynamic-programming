@@ -1,8 +1,7 @@
 from typing import *
 
 
-class TreeNode:
-
+class AVLTreeNode:
     __slots__ = ['key', 'val', 'left', 'right', 'height']
 
     def __init__(self, key, val, left=None, right=None):
@@ -13,7 +12,7 @@ class TreeNode:
         self.height = 1
 
     def __eq__(self, other):
-        if not isinstance(other, TreeNode):
+        if not isinstance(other, AVLTreeNode):
             return False
         return self.key == other.key
 
@@ -49,7 +48,7 @@ class TreeNode:
         return '\n'.join(recurse(self)[0])
 
 
-def rotate_right(y: TreeNode) -> TreeNode:
+def avl_rotate_right(y: AVLTreeNode) -> AVLTreeNode:
     x = y.left
     t1 = x.left
     t2 = x.right
@@ -60,12 +59,12 @@ def rotate_right(y: TreeNode) -> TreeNode:
     y.left = t2
     y.right = t3
 
-    y.height = height(y)
-    x.height = height(x)
+    y.height = avl_tree_height(y)
+    x.avl_tree_height = avl_tree_height(x)
     return x
 
 
-def rotate_left(x: TreeNode) -> TreeNode:
+def avl_rotate_left(x: AVLTreeNode) -> AVLTreeNode:
     y = x.right
     t1 = x.left
     t2 = y.left
@@ -76,37 +75,37 @@ def rotate_left(x: TreeNode) -> TreeNode:
     x.left = t1
     x.right = t2
 
-    x.height = height(x)
-    y.height = height(y)
+    x.height = avl_tree_height(x)
+    y.avl_tree_height = avl_tree_height(y)
 
     return y
 
 
-def height(tree: TreeNode) -> int:
+def avl_tree_height(tree: AVLTreeNode) -> int:
     if tree is None:
         return 0
-    left = tree.left.height if tree.left else 0
-    right = tree.right.height if tree.right else 0
+    left = tree.left.avl_tree_height if tree.left else 0
+    right = tree.right.avl_tree_height if tree.right else 0
     return max(left, right) + 1
 
 
-def delete_min(tree: TreeNode) -> TreeNode:
+def avl_delete_min(tree: AVLTreeNode) -> AVLTreeNode:
     if tree.left is None:
         return tree.right
-    tree.left = delete_min(tree.left)
-    tree.height = height(tree)
+    tree.left = avl_delete_min(tree.left)
+    tree.height = avl_tree_height(tree)
     return avl_self_balance(tree)
 
 
-def delete_max(tree: TreeNode) -> TreeNode:
+def avl_delete_max(tree: AVLTreeNode) -> AVLTreeNode:
     if tree.right is None:
         return tree.left
-    tree.right = delete_max(tree.right)
-    tree.height = height(tree)
+    tree.right = avl_delete_max(tree.right)
+    tree.height = avl_tree_height(tree)
     return avl_self_balance(tree)
 
 
-def min_node(tree: TreeNode) -> TreeNode:
+def tree_min_node(tree: AVLTreeNode) -> AVLTreeNode:
     cur = tree
     if cur is None:
         return cur
@@ -115,7 +114,7 @@ def min_node(tree: TreeNode) -> TreeNode:
     return cur
 
 
-def max_node(tree: TreeNode) -> TreeNode:
+def tree_max_node(tree: AVLTreeNode) -> AVLTreeNode:
     cur = tree
     if cur is None:
         return cur
@@ -124,7 +123,7 @@ def max_node(tree: TreeNode) -> TreeNode:
     return cur
 
 
-def tree_get(tree: TreeNode, val: Any) -> TreeNode:
+def tree_get(tree: AVLTreeNode, val: Any) -> AVLTreeNode:
     if tree is None:
         raise KeyError()
 
@@ -141,10 +140,10 @@ def tree_get(tree: TreeNode, val: Any) -> TreeNode:
     raise KeyError()
 
 
-def prev_node(tree, val):
+def tree_prev_node(tree, val):
     target = tree_get(tree, val)
     if target.left:
-        return max_node(target.left)
+        return tree_max_node(target.left)
     prev = None
     # prev_node is the parent node of target node
     cur = tree
@@ -160,10 +159,10 @@ def prev_node(tree, val):
     return prev
 
 
-def next_node(tree, val):
+def tree_next_node(tree, val):
     target = tree_get(tree, val)
     if target.right:
-        return min_node(target.right)
+        return tree_min_node(target.right)
 
     # next_node is the parent node of target node
     # target_node is guaranteed to be the left child of next_node
@@ -184,68 +183,68 @@ def next_node(tree, val):
 
 def avl_self_balance(tree):
     # always make tree left leaning (simpify the algos)
-    if height(tree.left) < height(tree.right):
-        tree = rotate_left(tree)
+    if avl_tree_height(tree.left) < avl_tree_height(tree.right):
+        tree = avl_rotate_left(tree)
 
-    if height(tree.left) > height(tree.right) + 1:
+    if avl_tree_height(tree.left) > avl_tree_height(tree.right) + 1:
         # change from (>) => (>=)
-        if height(tree.left.left) >= height(tree.left.right):
-            tree = rotate_right(tree)
+        if avl_tree_height(tree.left.left) >= avl_tree_height(tree.left.right):
+            tree = avl_rotate_right(tree)
         else:
-            tree.left = rotate_left(tree.left)
-            tree = rotate_right(tree)
+            tree.left = avl_rotate_left(tree.left)
+            tree = avl_rotate_right(tree)
     return tree
 
 
-def insert(tree: TreeNode, key, val):
+def avl_insert(tree: AVLTreeNode, key, val):
     if tree is None:
-        return TreeNode(key, val)
+        return AVLTreeNode(key, val)
 
     if key < tree.key:
-        tree.left = insert(tree.left, key, val)
-        tree.height = height(tree)
+        tree.left = avl_insert(tree.left, key, val)
+        tree.height = avl_tree_height(tree)
     else:
-        tree.right = insert(tree.right, key, val)
-        tree.height = height(tree)
+        tree.right = avl_insert(tree.right, key, val)
+        tree.height = avl_tree_height(tree)
 
     return avl_self_balance(tree)
 
 
-def tree_remove(tree: TreeNode, val: Any):
+def avl_delete(tree: AVLTreeNode, val: Any):
     # base case
     if tree is None:
         return None
     if val < tree.key:
-        tree.left = tree_remove(tree.left, val)
+        tree.left = avl_delete(tree.left, val)
     elif val > tree.key:
-        tree.right = tree_remove(tree.right, val)
+        tree.right = avl_delete(tree.right, val)
     else:
         if tree.left is None:
             return tree.right
         if tree.right is None:
             return tree.left
-        replacement = min_node(tree.right)
-        replacement.right = delete_min(tree.right)
+        replacement = tree_min_node(tree.right)
+        replacement.right = avl_delete_min(tree.right)
         replacement.left = tree.left
         tree = replacement
-    tree.height = height(tree)
+    tree.height = avl_tree_height(tree)
     return avl_self_balance(tree)
 
 
-def tree_copy(tree):
+def avl_copy(tree):
     if tree is None:
         return None
 
-    new_node = TreeNode(
+    new_node = AVLTreeNode(
         tree.key, tree.val,
-        left=tree_copy(tree.left),
-        right=tree_copy(tree.right)
+        left=avl_copy(tree.left),
+        right=avl_copy(tree.right)
     )
     new_node.height = tree.height
     return new_node
 
 
-def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
+def tree_equal(tree0: AVLTreeNode, tree1: AVLTreeNode) -> bool:
     if tree0 != tree1:
         return False
     left, right = True, True
@@ -256,7 +255,7 @@ def tree_equal(tree0: TreeNode, tree1: TreeNode) -> bool:
     return left and right
 
 
-def btree_complete(tree, idx, count):
+def tree_complete(tree, idx, count):
     if tree is None:
         return True
 
@@ -264,8 +263,8 @@ def btree_complete(tree, idx, count):
         return False
 
     else:
-        return btree_complete(tree.left, 2 * idx, count) \
-               and btree_complete(tree.right, 2 * idx + 1, count)
+        return tree_complete(tree.left, 2 * idx, count) \
+               and tree_complete(tree.right, 2 * idx + 1, count)
 
 
 def tree_count(tree):
@@ -288,21 +287,21 @@ def tree_rank(tree, key):
         return tree_count(tree.left)
 
 
-def check_avl_invariants(tree):
+def avl_is_avl(tree):
     if tree is None:
         return True
-    if abs(height(tree.left) - height(tree.right)) > 1:
+    if abs(avl_tree_height(tree.left) - avl_tree_height(tree.right)) > 1:
         return False
 
-    return check_avl_invariants(tree.left) and check_avl_invariants(tree.right)
+    return avl_is_avl(tree.left) and avl_is_avl(tree.right)
 
 
-def check_heights(tree):
+def avl_ensure_height(tree):
     if tree is None:
         return True
-    if tree.height != max(height(tree.left), height(tree.right)) + 1:
+    if tree.height != max(avl_tree_height(tree.left), avl_tree_height(tree.right)) + 1:
         return False
-    return check_heights(tree.left) and check_heights(tree.right)
+    return avl_ensure_height(tree.left) and avl_ensure_height(tree.right)
 
 
 class AVLTreeMap:
@@ -312,18 +311,18 @@ class AVLTreeMap:
             return
 
         for k, v in iterable.items():
-            self.tree = insert(self.tree, k, v)
+            self.tree = avl_insert(self.tree, k, v)
 
     def copy(self):
         new_tree_map = AVLTreeMap()
-        new_tree_map.tree = tree_copy(self.tree)
+        new_tree_map.tree = avl_copy(self.tree)
         return new_tree_map
 
     def __bool__(self):
         return self.tree is not None
 
     def add(self, key, val):
-        self.tree = insert(self.tree, key, val)
+        self.tree = avl_insert(self.tree, key, val)
 
     def get(self, key):
         node = tree_get(self.tree, key)
@@ -343,21 +342,21 @@ class AVLTreeMap:
     def min(self):
         if self.tree is None:
             raise ValueError()
-        return min_node(self.tree).val
+        return tree_min_node(self.tree).val
 
     def max(self):
         if self.tree is None:
             raise ValueError()
-        return max_node(self.tree).val
+        return tree_max_node(self.tree).val
 
     def next_large(self, key):
-        n = next_node(self.tree, key)
+        n = tree_next_node(self.tree, key)
         if n is None:
             return n
         return n.val
 
     def prev(self, key):
-        n = prev_node(self.tree, key)
+        n = tree_prev_node(self.tree, key)
         if n is None:
             return n
         return n.val
@@ -372,15 +371,15 @@ class AVLTreeMap:
         return tree_equal(self.tree, other.tree)
 
     def delete_min(self):
-        minimum = min_node(self.tree)
-        self.tree = delete_min(self.tree)
+        minimum = tree_min_node(self.tree)
+        self.tree = avl_delete_min(self.tree)
         return minimum if not minimum else minimum.key
 
     def is_avl(self):
-        heights_ok = check_heights(self.tree)
+        heights_ok = avl_ensure_height(self.tree)
         if not heights_ok:
             print("failed node height check")
-        return heights_ok and check_avl_invariants(self.tree)
+        return heights_ok and avl_is_avl(self.tree)
 
     def delete_key(self, key):
-        self.tree = tree_remove(self.tree, key)
+        self.tree = avl_delete(self.tree, key)
