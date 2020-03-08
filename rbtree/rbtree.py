@@ -15,20 +15,42 @@ def is_red(tree):
 
 
 def rb_insert(tree, key, val):
+    tree = _rb_insert(tree, key, val)
+    tree.color = RBTreeNodeColor.Black
+    return tree
+
+
+def _rb_insert(tree, key, val):
     new_node = RBTreeNode(key, val)
     if tree is None:
         return new_node
 
     if key < tree.key:
-        tree.left = rb_insert(tree.left, key, val)
+        tree.left = _rb_insert(tree.left, key, val)
 
     elif key > tree.key:
-        tree.right = rb_insert(tree.right, key, val)
+        tree.right = _rb_insert(tree.right, key, val)
 
     else:
         tree.val = val
 
+    if not is_red(tree.left) and is_red(tree.right):
+        tree = rb_rotate_left(tree)
+
+    if is_red(tree.left) and is_red(tree.left.left):
+        tree = rb_rotate_right(tree)
+
+    if is_red(tree.left) and is_red(tree.right):
+        flip_color(tree)
+
     return tree
+
+
+def flip_color(tree):
+    tree.color = RBTreeNodeColor.Red
+    tree.left.color = RBTreeNodeColor.Black
+    tree.right.color = RBTreeNodeColor.Black
+
 
 
 def rb_rotate_right(y):
@@ -43,7 +65,6 @@ def rb_rotate_right(y):
     y.right = t3
     x.color = y.color
     y.color = RBTreeNodeColor.Red
-
 
     return x
 
@@ -106,8 +127,8 @@ class RBTreeNode:
             return lines, pos, width
 
         ascii_art = '\n'.join(recurse(self)[0])
-        ascii_art = re.sub(r"(\(0:.*\))", rf"{Fore.RED}\1{Fore.RESET}", ascii_art)
-        ascii_art = re.sub(r"(\(1:.*\))", rf"{Fore.GREEN}\1{Fore.RESET}", ascii_art)
+        ascii_art = re.sub(r"(\(0:.*?\))", rf"{Fore.RED}\1{Fore.RESET}", ascii_art)
+        ascii_art = re.sub(r"(\(1:.*?\))", rf"{Fore.GREEN}\1{Fore.RESET}", ascii_art)
         return ascii_art
 
 
@@ -154,7 +175,7 @@ def red_parent_should_not_have_red_child(tree):
     if tree is None:
         return True
     if tree.color is RBTreeNodeColor.Red and \
-            ((rb_color(tree.left) is RBTreeNodeColor.Red) or (rb_color(tree.right) is RBTreeNodeColor.Red)):
+            (is_red(tree.left)) or (is_red(tree.right)):
         return False
 
     return red_parent_should_not_have_red_child(tree.left) and red_parent_should_not_have_red_child(tree.right)
@@ -163,9 +184,17 @@ def red_parent_should_not_have_red_child(tree):
 if __name__ == '__main__':
     root = None
     import random
-    for i in range(20):
-        root = rb_insert(root, i, i)
 
-    print(root)
+    l = list(range(30))
+    random.shuffle(l)
+
+    for i in l:
+        root = rb_insert(root, i, i)
+        print(root)
+        if not rb_invariants_check(root):
+            raise ValueError()
+
+
+
 
 
