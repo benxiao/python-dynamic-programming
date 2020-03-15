@@ -28,6 +28,9 @@ class Edge:
             return False
         return (self._w, self._a, self._b) == (other._w, other._a, other._b)
 
+    def __hash__(self):
+        return hash((self._a, self._b, self._w))
+
     @property
     def a(self):
         return self._a
@@ -46,26 +49,7 @@ class Edge:
     __repr__ = __str__
 
 
-class DWG:
-    def __init__(self, n):
-        self.adj = [[] for _ in range(n)]
-
-    def __len__(self):
-        return len(self.adj)
-
-    def add(self, i, j, w):
-        e = Edge(i, j, w)
-        self.adj[i].append(e)
-
-    def __str__(self):
-        return str(self.adj)
-
-    def all_edges(self):
-        for g in self.adj:
-            for e in g:
-                yield e
-
-class WG:
+class WeightedGraph:
     def __init__(self, n):
         self.adj: List[List[Edge]] = [[] for _ in range(n)]
 
@@ -149,26 +133,30 @@ def prim_algo(graph):
     return edges_in_mst
 
 
-def draw_result(graph):
-    edges_in_mst = prim_algo(graph)
-    visual_rep = gv.Graph()
+def draw_result(graph, algo):
+    edges_in_mst = algo(graph)
+    edges_in_mst = set(Edge(e.b, e.a, e.w) if e.b < e.a else e for e in edges_in_mst)
+    all_edges = set()
     for g in graph.adj:
         for e in g:
             if e.a < e.b and e not in edges_in_mst:
-                visual_rep.edge(str(e.a), str(e.b), label=f"{e.w:.2f}")
+                all_edges.add(e)
+    not_selected_edges = all_edges.difference(edges_in_mst)
+    visual_rep = gv.Graph()
     for e in edges_in_mst:
         visual_rep.edge(str(e.a), str(e.b), color='blue', label=f"{e.w:.2f}")
+    for e in not_selected_edges:
+        visual_rep.edge(str(e.a), str(e.b), label=f"{e.w:.2f}")
     visual_rep.view()
 
 
 if __name__ == '__main__':
-    g = WG(10)
-    g.random(2)
+    g = WeightedGraph(20)
+    g.random(3)
    # print(g.adj)
     #g.viz()
     print(kruskal_algo(g))
     print(prim_algo(g))
-    draw_result(g)
-    #print(kruskal_algo(dg))
+    draw_result(g, prim_algo)
 
 
