@@ -1,130 +1,44 @@
-import numba as nb
-import numpy as np
-concated = "abcxxxabyyy"
+original_str = "aabxaabxcaabxaabxay"
 
-NumbaBytes = nb.typeof("".encode())
-Numba1DInt64Array = nb.typeof(np.ones(1, dtype=np.uint32))
-print(Numba1DInt64Array)
+z_values = [0, 1, 0, 0, 4, 1, 0, 0, 0, 8, 1, 0, 0, 5, 1, 0, 0, 1, 0]
 
 
-def navie_zbox(s):
-    l = len(s)
-    zs = [0] * l
-    zs[0] = l
-    for k in range(1, l):
-        current_z = 0
-        for j in range(l):
-            if k + j < l and s[j] != s[k+j]:
-                break
-            current_z += 1
-        zs[k] = current_z
-    return zs
-
-
-@nb.njit(Numba1DInt64Array(NumbaBytes))
-def jit_zbox_algo(s):
-    l = len(s)
-    zs = np.zeros(l, dtype=nb.uint32)
-    zs[0] = l
+def z_algo(source):
+    source_length = len(source)
+    z_values = [0] * source_length
     left, right = 0, 0
-    for k in range(1, l):
-        # we are inside of the zbox
-        if right >= k:
-            # zval is contained in the zbox
-            z_val = min(zs[k - left], l - k)
-            if z_val + k <= right:
-                zs[k] = z_val
-            else:
-                while k + z_val < l:
-                    if s[z_val] != s[k + z_val]:
-                        break
-                    z_val += 1
-                zs[k] = z_val
-                left = k
-                right = left + z_val - 1
-        # we are outside of the zbox
-        else:
-            z_val = 0
-            for i in range(l):
-                if i + k >= l or s[i] != s[i + k]:
+    for k in range(1, source_length):
+        # we do str cmp
+        if k >= right:
+            left = right = k
+            for i, j in enumerate(range(k, source_length)):
+                if source[i] != source[j]:
                     break
-                z_val += 1
-            zs[k] = z_val
-            left = k
-            right = left + z_val - 1
+                right += 1
 
-    return zs
+            z_values[k] = right - left
 
-
-def zbox_algo(s, debug=False):
-    l = len(s)
-    zs = [-1] * l
-    zs[0] = l
-    left, right = 0, 0
-    for k in range(1, l):
-        # we are inside of the zbox
-        if debug:
-            print(f"{k} iteration:")
-            print(s)
-            print(s[k:])
-
-        if right >= k:
-            # zval is contained in the zbox
-            z_val = min(zs[k-left], l-k)
-            if z_val + k <= right:
-                zs[k] = min(z_val, l-k)
-                if debug:
-                    print(f"  zbox: ({left}, {right})")
-                    print("  we are inside the zbox, no comparision needed")
-                    print("  ", zs)
-            else:
-                z_val = min(zs[k-left], l-k)
-                while k+z_val < l:
-                    if s[z_val] != s[k+z_val]:
-                        break
-                    z_val += 1
-
-                zs[k] = z_val
-                left = k
-                if z_val:
-                    right = left + z_val - 1
-                else:
-                    right = left
-
-                if debug:
-                    print(f"  zbox: ({left}, {right})")
-                    print("  we are extend outside the zbox, comparisons needed")
-                    print("  ", zs)
-        # we are outside of the zbox
+        # we may use the precomputed results
         else:
-            z_val = 0
-            for i in range(l):
-                if i+k >= l or s[i] != s[i+k]:
-                    break
-                z_val += 1
-            zs[k] = z_val
-            left = k
-            if z_val:
-                right = left + z_val - 1
+            z_value = z_values[k-left]
+            # we stay within the current zbox
+            if k + z_value < right:
+                z_values[k] = z_value
+
+            # we extend outside the current zbox
             else:
-                right = left
-            if debug:
-                print(f"  zbox: ({left}, {right})")
-                print("  we are outside the zbox, manual comparsion needed")
-                print("  ", zs)
-    return zs
+                # length within the zbox
+                length = right - k
+                while k+length < source_length:
+                    if source[length] != source[k+length]:
+                        break
+                    length += 1
+                z_values[k] = length
+                left = k
+                right = left + length
+    return z_values
+
+# print(z_values)
+# print(z_algo(original_str))
 
 
-
-
-
-
-
-
-
-if __name__ == '__main__':
-    a = "abcabcabc"
-    print(zbox_algo(a, debug=True))
-    b = "aabcaabxaaaz"
-    print(zbox_algo(b, debug=True))
-    print(jit_zbox_algo(a.encode()))
