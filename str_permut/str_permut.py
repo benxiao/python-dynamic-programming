@@ -21,24 +21,25 @@ def permut(text):
     charset = sorted(set(character_counter.keys()))
     stack.append(("", iter(charset)))
     while stack:
-        sofar, it = stack[-1]
+        permutation_under_construction, it = stack[-1]
         try:
             while 1:
                 ch = next(it)
                 if character_counter[ch] > 0:
                     character_counter[ch] -= 1
                     break
-            stack.append((sofar+ch, iter(charset)))
+            stack.append((permutation_under_construction+ch, iter(charset)))
 
         except StopIteration:
-            sofar, _ = stack.pop()
-            if len(sofar) == text_length:
-                yield sofar
-            if len(sofar):
-                character_counter[sofar[-1]] += 1
+            permutation_under_construction, _ = stack.pop()
+            if len(permutation_under_construction) == text_length:
+                yield permutation_under_construction
+
+            if len(permutation_under_construction):
+                character_counter[permutation_under_construction[-1]] += 1
 
 
 if __name__ == '__main__':
     #print(rec_permut({"a": 2, "b":1, "c": 1}, 4, []))
-    for x in permut("davidson"):
+    for x in enumerate(permut("draken")):
         print(x)
