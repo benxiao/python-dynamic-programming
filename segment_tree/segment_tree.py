@@ -2,8 +2,7 @@ import math
 
 arr = [-1, 2, 4, 0]
 
-length_segment_tree = 2 ** math.ceil(math.log(len(arr))+1)
-
+length_segment_tree = 2 ** math.ceil(math.log(len(arr)) + 1)
 
 segment_tree = [float('inf')] * length_segment_tree
 segment_tree[0] = None
@@ -34,9 +33,7 @@ def range_query(segment_tree, query_left, query_right, left, right, n):
     else:
         mid = (left + right) // 2
         return min(range_query(segment_tree, query_left, query_right, left, mid, n << 1),
-                   range_query(segment_tree, query_left, query_right, mid, right, (n << 1)+1))
-
-
+                   range_query(segment_tree, query_left, query_right, mid, right, (n << 1) + 1))
 
 
 if __name__ == '__main__':
