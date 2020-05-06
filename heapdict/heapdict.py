@@ -9,7 +9,7 @@ def left(x):
 
 
 def right(x):
-    return x << 1 + 1
+    return (x << 1) + 1
 
 
 def parent(x):
@@ -113,7 +113,7 @@ def heappush(_heap, _dict, key, priority, debug=False):
     """
     push a new item on the _heap
     """
-    if _dict.tree_get(key):
+    if _dict.get(key):
         raise ValueError()
 
     _heap.append((priority, key))
