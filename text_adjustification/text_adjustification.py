@@ -13,7 +13,7 @@ def text_adjustification(lst_words, line_width, k):
             width = len(" ".join(lst_words[k:j]))
             if width >= line_width:
                 break
-            suffix_cost, suffix_solution, suffix_cost_lines = text_adjustification(lst_words, line_width, j)
+            suffix_cost, suffix_solution = text_adjustification(lst_words, line_width, j)
             current_line_cost = (line_width-width) ** 2
             current_cost = suffix_cost + current_line_cost
             if current_cost < min_cost:
