@@ -10,7 +10,7 @@ abs(max_line_width, line_width) ** 2
 """
 
 
-def text_adjustification(text: List, max_line_width=10):
+def text_adjustification(text: List[str], max_line_width=10):
     n_words = len(text)
     # line_width determine the maximum number of words per line
     max_number_words_per_line = min(max_line_width // 2, n_words)
@@ -25,11 +25,14 @@ def text_adjustification(text: List, max_line_width=10):
                 break
             row[j-1-i] = (max_line_width - line_width) ** 2
 
-    for row in cache:
-        print(row)
+    # for row in cache:
+    #     print(row)
 
     cost_cache = [float('inf')] * (len(text) + 1)
     cost_cache[-1] = 0
+    index_cache = [None] * (len(text) + 1)
+    index_cache[-1] = []
+
     i = len(text) - 1
     while i > -1:
         row = cache[i]
@@ -38,10 +41,11 @@ def text_adjustification(text: List, max_line_width=10):
             combined_cost = cost + cost_cache[i+k+1]
             if cost_cache[i] > combined_cost:
                 cost_cache[i] = combined_cost
+                index_cache[i] = [i] + index_cache[i+k+1]
 
         i -= 1
-    print(cost_cache)
-    return cost_cache[0]
+    return cost_cache[0], index_cache[0]
+
 
 if __name__ == '__main__':
     print(text_adjustification(text))
