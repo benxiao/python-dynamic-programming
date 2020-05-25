@@ -41,5 +41,5 @@ def permut(text):
 
 if __name__ == '__main__':
     #print(rec_permut({"a": 2, "b":1, "c": 1}, 4, []))
-    for x in enumerate(permut("draken")):
+    for x in enumerate(permut("aabbc")):
         print(x)
