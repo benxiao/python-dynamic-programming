@@ -23,7 +23,5 @@ def text_adjustification(lst_words, line_width, k):
     return min_cost, min_solution
 
 
-
-
 if __name__ == '__main__':
     print(text_adjustification(text, 10, 0))

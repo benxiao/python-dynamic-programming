@@ -17,6 +17,9 @@ def word_break(dictionary, text):
                         cache[start][end] = 1
                         word_cache[start][end] = word_cache[start][split-1] + word_cache[split][end]
 
+    print(cache)
+    print(word_cache)
+
     return word_cache[0][-1]
 
 

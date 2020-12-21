@@ -52,6 +52,7 @@ def largest_cross(a):
         for j in range(l):
             cur = min(left[i][j], right[i][j], top[i][j], bottom[i][j])
             max_cross = max(cur, max_cross)
+
     return max_cross
 
 

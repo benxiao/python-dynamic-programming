@@ -1,14 +1,14 @@
-length = [1,2,3,4,5,6,7,8]
-price = [1,5,8,9,10,17,17,20]
+length = [1, 2, 3, 4, 5, 6, 7, 8]
+price = [1, 5, 8, 9, 10, 17, 17, 20]
 
 
 def rod_cutting(prices, lengths, n):
-    cache = [0] * (n+1)
-    for i in range(1, n+1):
+    cache = [0] * (n + 1)
+    for i in range(1, n + 1):
         current_max = 0
         for l in lengths:
             if i - l >= 0:
-                current = cache[i-l] + prices[l - 1]
+                current = cache[i - l] + prices[l - 1]
                 if current > current_max:
                     current_max = current
         cache[i] = current_max

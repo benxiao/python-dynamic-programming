@@ -190,7 +190,7 @@ if __name__ == '__main__':
 
     for i in l:
         root = rb_insert(root, i, i)
-        print(root)
+        print(root, end='\n'*3)
         if not rb_invariants_check(root):
             raise ValueError()
 

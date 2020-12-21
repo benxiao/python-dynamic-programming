@@ -47,7 +47,7 @@ if __name__ == '__main__':
     print(f"np.random.choice = {np_solution:.6f}s")
 
     start = time.time()
-    random_choice_by_p_float(np.array([0.01, 0.01, 0.98]), 1000_000)
+    random_choice_by_p_float(np.array([1.0, 1.0, 1.0, 0.1, 3.0]), 1000_000)
     my_solution = time.time()-start
     print(f"random_choice_by_p_float = {time.time()-start:.6f}s")
 

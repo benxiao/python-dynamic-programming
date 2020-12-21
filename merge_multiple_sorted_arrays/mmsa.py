@@ -39,4 +39,4 @@ def merge(*arrays):
 
 
 if __name__ == '__main__':
-    print(merge([1,3,5, 7], [2, 4, 6], [0,8, 9]))
+    print(merge([1, 3, 5, 7], [2, 4, 6], [0, 8, 9]))

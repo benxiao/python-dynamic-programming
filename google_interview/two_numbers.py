@@ -1,7 +1,7 @@
 def navie_tn(array, target):
     l = len(array)
     for i in range(l-1):
-        for j in range(i+1,l):
+        for j in range(i+1, l):
             if array[i] + array[j] == target:
                 return i, j
     return None

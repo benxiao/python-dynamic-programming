@@ -51,6 +51,6 @@ def lcs(s0, s1):
 
 if __name__ == '__main__':
     # perfect usecase for messy data
-    #print(lcs("trucson le", "truc le"))
+    print(lcs("trucson le", "truc le"))
     print()
     print(lcs("melone", "melbourne"))
